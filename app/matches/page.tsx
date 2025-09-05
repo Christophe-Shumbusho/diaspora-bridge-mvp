@@ -7,28 +7,35 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, MessageCircle, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { getMatchingMentors, type Mentor } from "@/lib/mentors"
+import { useAuth } from "@/lib/auth-context"
 
 export default function MatchesPage() {
+  const { user } = useAuth()
   const [matches, setMatches] = useState<Mentor[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Simulate getting user's preferences from signup
-    // In a real app, this would come from user session/database
-    const userField = "Technology & Software" // This would be from user's signup data
-    const userGoals = "Learn software engineering" // This would be from user's signup data
+    if (!user || user.role !== "mentee") {
+      setLoading(false)
+      return
+    }
+
+    // Get user's actual career field and goals from auth
+    const userField = user.careerField || "Technology & Software"
+    const userGoals = user.goals || "Learn and grow in my field"
 
     const matchedMentors = getMatchingMentors(userField, userGoals)
     setMatches(matchedMentors)
     setLoading(false)
-  }, [])
+  }, [user])
 
   const refreshMatches = () => {
+    if (!user || user.role !== "mentee") return
+    
     setLoading(true)
-    // Simulate API call delay
     setTimeout(() => {
-      const userField = "Technology & Software"
-      const userGoals = "Learn software engineering"
+      const userField = user.careerField || "Technology & Software"
+      const userGoals = user.goals || "Learn and grow in my field"
       const matchedMentors = getMatchingMentors(userField, userGoals)
       setMatches(matchedMentors)
       setLoading(false)
@@ -41,6 +48,22 @@ export default function MatchesPage() {
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center justify-center py-16">
             <RefreshCw className="h-8 w-8 animate-spin text-primary" />
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-background px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center py-16">
+            <h2 className="text-xl font-semibold mb-2">Please log in</h2>
+            <p className="text-muted-foreground mb-4">You need to be logged in to see your matches.</p>
+            <Button asChild>
+              <Link href="/signup">Get Started</Link>
+            </Button>
           </div>
         </div>
       </div>
@@ -109,7 +132,7 @@ export default function MatchesPage() {
 
                 <div className="flex gap-3 pt-2">
                   <Button asChild>
-                    <Link href={`/chat/${mentor.id}`}>
+                    <Link href={`/chat/start/${mentor.id}`}>
                       <MessageCircle className="h-4 w-4 mr-2" />
                       Start Conversation
                     </Link>

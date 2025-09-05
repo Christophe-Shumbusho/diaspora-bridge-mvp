@@ -13,6 +13,9 @@ export interface NotificationData {
   expiresAt?: Date
 }
 
+// Import mentors for matching
+import { SAMPLE_MENTORS } from "./mentors"
+
 export function generateMatchNotificationEmail(data: NotificationData): EmailTemplate {
   const { mentorName, menteeName, mentorField, conversationId, expiresAt } = data
 
@@ -325,4 +328,98 @@ export async function scheduleExpiryReminder(
 
   // For demo, send immediately
   await sendEmail(menteeEmail, template)
+}
+
+// Auto-notification system
+export async function sendMentorMatchNotification(menteeEmail: string, mentorId: string, menteeData: {
+  name: string
+  careerField: string
+  goals: string
+  location: string
+}) {
+  // In a real app, this would integrate with an email service like SendGrid, Resend, etc.
+  console.log(`📧 Sending mentor match notification to ${menteeEmail}`)
+  
+  // Simulate email sending
+  const notificationData: NotificationData = {
+    mentorName: "Dr. Aline Uwimana", // This would be fetched from mentor data
+    menteeName: menteeData.name,
+    mentorField: menteeData.careerField,
+    conversationId: "conv-1",
+    expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000), // 48 hours
+  }
+
+  const emailTemplate = generateMatchNotificationEmail(notificationData)
+  
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  
+  console.log("✅ Email sent successfully:", emailTemplate.subject)
+  return emailTemplate
+}
+
+export async function sendMentorRequestNotification(mentorEmail: string, menteeData: {
+  name: string
+  email: string
+  careerField: string
+  goals: string
+  experience: string
+}) {
+  console.log(`📧 Sending mentor request notification to ${mentorEmail}`)
+  
+  // Simulate email sending
+  const notificationData: NotificationData = {
+    mentorName: "Dr. Aline Uwimana", // This would be the actual mentor
+    menteeName: menteeData.name,
+    mentorField: menteeData.careerField,
+    conversationId: "conv-1",
+    expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
+  }
+
+  const emailTemplate = generateMentorRequestEmail(notificationData)
+  
+  // Simulate API call
+  await new Promise(resolve => setTimeout(resolve, 1000))
+  
+  console.log("✅ Mentor notification sent:", emailTemplate.subject)
+  return emailTemplate
+}
+
+// Enhanced matching function that sends notifications
+export async function createMentorMenteeMatch(menteeData: {
+  name: string
+  email: string
+  careerField: string
+  goals: string
+  experience: string
+  location: string
+}) {
+  console.log("🔍 Finding best mentor match for:", menteeData.name)
+  
+  // Find matching mentors (this would be more sophisticated in a real app)
+  const matchingMentors = SAMPLE_MENTORS.filter(mentor => 
+    mentor.field === menteeData.careerField && mentor.availability === "available"
+  )
+  
+  if (matchingMentors.length === 0) {
+    console.log("❌ No available mentors found for field:", menteeData.careerField)
+    return null
+  }
+  
+  // Select the best match (in a real app, this would use ML algorithms)
+  const selectedMentor = matchingMentors[0]
+  
+  console.log("✅ Selected mentor:", selectedMentor.name)
+  
+  // Send notifications to both parties
+  await Promise.all([
+    sendMentorMatchNotification(menteeData.email, selectedMentor.id, menteeData),
+    sendMentorRequestNotification(selectedMentor.email || "mentor@example.com", menteeData)
+  ])
+  
+  return {
+    mentor: selectedMentor,
+    conversationId: `conv-${Date.now()}`,
+    status: "pending"
+  }
 }

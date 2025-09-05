@@ -5,10 +5,12 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import { Menu, MessageCircle, Users, Bell, Home, Search } from "lucide-react"
+import { Menu, MessageCircle, Users, Bell, Home, Search, LogOut, User, Shield } from "lucide-react"
+import { useAuth } from "@/lib/auth-context"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
+  const { user, logout, isAuthenticated } = useAuth()
 
   // In a real app, these would come from user context/state
   const unreadMessages = 2
@@ -21,6 +23,15 @@ export function Navigation() {
     { href: "/chat", label: "Conversations", icon: MessageCircle, badge: unreadMessages },
     { href: "/notifications", label: "Email Settings", icon: Bell },
   ]
+
+  // Add mentor-specific navigation items
+  const mentorNavItems = [
+    { href: "/mentor/dashboard", label: "Mentor Dashboard", icon: Users },
+    { href: "/mentors", label: "Browse Mentors", icon: Users },
+    { href: "/notifications", label: "Email Settings", icon: Bell },
+  ]
+
+  const currentNavItems = user?.role === "mentor" ? mentorNavItems : navItems
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -36,7 +47,7 @@ export function Navigation() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-6">
-            {navItems.map((item) => (
+            {currentNavItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -51,9 +62,34 @@ export function Navigation() {
                 )}
               </Link>
             ))}
-            <Button asChild>
-              <Link href="/signup">Get Started</Link>
-            </Button>
+            
+            {isAuthenticated && user ? (
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-sm">
+                  <User className="h-4 w-4" />
+                  <span className="text-muted-foreground">{user.name}</span>
+                  <Badge variant="outline" className="text-xs">
+                    {user.role}
+                  </Badge>
+                </div>
+                <Button variant="outline" size="sm" onClick={logout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/admin/login">
+                    <Shield className="h-4 w-4 mr-2" />
+                    Admin
+                  </Link>
+                </Button>
+                <Button asChild>
+                  <Link href="/signup">Get Started</Link>
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Mobile Navigation */}

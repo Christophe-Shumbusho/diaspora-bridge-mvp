@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,6 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/lib/auth-context"
+import { createMenteeProfile } from "@/lib/auth"
 import { scheduleMatchNotification } from "@/lib/email"
 
 const CAREER_FIELDS = [
@@ -26,6 +29,8 @@ const CAREER_FIELDS = [
 ]
 
 export default function SignupPage() {
+  const router = useRouter()
+  const { login } = useAuth()
   const [step, setStep] = useState(1)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isComplete, setIsComplete] = useState(false)
@@ -35,6 +40,8 @@ export default function SignupPage() {
     careerField: "",
     goals: "",
     background: "",
+    location: "",
+    interests: [] as string[],
   })
 
   const handleNext = () => {
@@ -50,8 +57,22 @@ export default function SignupPage() {
     console.log("[v0] Signup form submitted:", formData)
 
     try {
+      // Create mentee profile
+      const menteeProfile = createMenteeProfile({
+        name: formData.name,
+        email: formData.email,
+        careerField: formData.careerField,
+        goals: formData.goals,
+        experience: formData.background,
+        interests: formData.interests,
+        location: formData.location,
+      })
+
+      // Save user to auth system
+      login(menteeProfile)
+
       // Simulate API delay
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await new Promise((resolve) => setTimeout(resolve, 1000))
 
       // Send match notification email
       await scheduleMatchNotification(formData.email, {
@@ -63,6 +84,12 @@ export default function SignupPage() {
       })
 
       setIsComplete(true)
+      
+      // Redirect to matches after 2 seconds
+      setTimeout(() => {
+        router.push("/matches")
+      }, 2000)
+      
     } catch (error) {
       console.error("[v0] Signup error:", error)
     } finally {

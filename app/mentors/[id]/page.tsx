@@ -76,7 +76,7 @@ export default function MentorProfilePage({ params }: MentorProfilePageProps) {
                   asChild={mentor.availability === "available"}
                 >
                   {mentor.availability === "available" ? (
-                    <Link href={`/chat/${mentor.id}`}>
+                    <Link href={`/chat/start/${mentor.id}`}>
                       <MessageCircle className="h-4 w-4 mr-2" />
                       Start Conversation
                     </Link>
