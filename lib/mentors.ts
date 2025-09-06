@@ -197,16 +197,26 @@ export const SAMPLE_MENTORS: Mentor[] = [
 ]
 
 export function getMatchingMentors(careerField: string, goals: string): Mentor[] {
-  // Filter mentors by career field first
-  let matches = SAMPLE_MENTORS.filter((mentor) => mentor.field === careerField && mentor.availability === "available")
+  const goalTokens = goals.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean)
 
-  // If no exact field matches, look for related fields or available mentors
-  if (matches.length === 0) {
-    matches = SAMPLE_MENTORS.filter((mentor) => mentor.availability === "available")
+  // Score mentors by field match + keyword overlap
+  const scored = SAMPLE_MENTORS.filter(m => m.availability === "available").map((mentor) => {
+    let score = 0
+    if (mentor.field === careerField) score += 5
+    const expertiseText = mentor.expertise.join(" ").toLowerCase()
+    for (const token of goalTokens) {
+      if (expertiseText.includes(token)) score += 1
+    }
+    return { mentor, score }
+  })
+
+  // If no one scored, fall back to available mentors
+  const sorted = scored.sort((a, b) => b.score - a.score)
+  const result = sorted.map(s => s.mentor)
+  if (result.length === 0) {
+    return SAMPLE_MENTORS.filter(m => m.availability === "available").slice(0, 3)
   }
-
-  // Sort by relevance (for now, just randomize to simulate matching algorithm)
-  return matches.sort(() => Math.random() - 0.5).slice(0, 3)
+  return result.slice(0, 3)
 }
 
 export function getAllAvailableMentors(): Mentor[] {

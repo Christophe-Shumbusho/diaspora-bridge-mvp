@@ -103,7 +103,8 @@ export function getConversationsForUser(userId: string): Conversation[] {
   }))
 }
 
-export function formatTimeAgo(date: Date): string {
+export function formatTimeAgo(dateLike: Date | string): string {
+  const date = typeof dateLike === "string" ? new Date(dateLike) : dateLike
   const now = new Date()
   const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000)
 

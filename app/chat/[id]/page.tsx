@@ -8,7 +8,9 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Send, Clock, User, MessageCircle } from "lucide-react"
 import Link from "next/link"
-import { SAMPLE_CONVERSATIONS, SAMPLE_MESSAGES, getConversationMessages, formatTimeAgo, getTimeRemaining, type Message } from "@/lib/chat"
+import { SAMPLE_CONVERSATIONS, formatTimeAgo, getTimeRemaining } from "@/lib/chat"
+import { getMessages, sendMessage, type ChatMessage } from "@/lib/messages-repo"
+import { useAuth } from "@/lib/auth-context"
 
 interface ConversationPageProps {
   params: Promise<{ id: string }>
@@ -17,47 +19,27 @@ interface ConversationPageProps {
 export default function ConversationPage({ params }: ConversationPageProps) {
   const router = useRouter()
   const resolvedParams = use(params)
+  const { user } = useAuth()
   const [newMessage, setNewMessage] = useState("")
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<ChatMessage[]>([])
 
   const conversation = SAMPLE_CONVERSATIONS.find((conv) => conv.id === resolvedParams.id)
 
   useEffect(() => {
-    if (conversation) {
-      const conversationMessages = getConversationMessages(conversation.id)
-      setMessages(conversationMessages)
-    }
+    if (conversation) setMessages(getMessages(conversation.id))
   }, [conversation])
 
   const handleSendMessage = () => {
-    if (!newMessage.trim() || !conversation) return
-
-    const newMsg: Message = {
-      id: `msg-${Date.now()}`,
-      senderId: "user-1", // Current user (mentee)
-      senderName: "John Doe",
+    if (!newMessage.trim() || !conversation || !user) return
+    const saved = sendMessage({
+      conversationId: conversation.id,
+      senderId: user.id,
+      senderName: user.name,
       senderType: "mentee",
       content: newMessage,
-      timestamp: new Date(),
-      read: false,
-    }
-
-    setMessages((prev) => [...prev, newMsg])
+    })
+    setMessages((prev) => [...prev, saved])
     setNewMessage("")
-
-    // Simulate mentor response after 2 seconds
-    setTimeout(() => {
-      const mentorResponse: Message = {
-        id: `msg-${Date.now()}-response`,
-        senderId: conversation.mentorId,
-        senderName: conversation.mentorName,
-        senderType: "mentor",
-        content: "Thanks for your message! I'll get back to you soon with a detailed response.",
-        timestamp: new Date(),
-        read: false,
-      }
-      setMessages((prev) => [...prev, mentorResponse])
-    }, 2000)
   }
 
   if (!conversation) {

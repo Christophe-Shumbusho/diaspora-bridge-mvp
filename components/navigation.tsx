@@ -1,16 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { Menu, MessageCircle, Users, Bell, Home, Search, LogOut, User, Shield } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { getConversationsForMentor } from "@/lib/conversations-repo"
+import { getAllApplications } from "@/lib/applications-repo"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
   const { user, logout, isAuthenticated } = useAuth()
+  const [mentorPendingCount, setMentorPendingCount] = useState(0)
+  const [adminPendingCount, setAdminPendingCount] = useState(0)
 
   // In a real app, these would come from user context/state
   const unreadMessages = 2
@@ -32,6 +36,22 @@ export function Navigation() {
   ]
 
   const currentNavItems = user?.role === "mentor" ? mentorNavItems : navItems
+
+  useEffect(() => {
+    if (user?.role === "mentor") {
+      const list = getConversationsForMentor(user.id).filter((c) => c.status === "pending")
+      setMentorPendingCount(list.length)
+    } else {
+      setMentorPendingCount(0)
+    }
+
+    if (user?.role === "admin") {
+      const apps = getAllApplications().filter((a) => a.status === "pending")
+      setAdminPendingCount(apps.length)
+    } else {
+      setAdminPendingCount(0)
+    }
+  }, [user])
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -62,6 +82,25 @@ export function Navigation() {
                 )}
               </Link>
             ))}
+            <Link href="/apply-mentor" className="text-muted-foreground hover:text-foreground text-sm">
+              Apply as Mentor
+            </Link>
+            {user?.role === "mentor" && (
+              <Link href="/mentor/requests" className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1">
+                Mentor Requests
+                {mentorPendingCount > 0 && (
+                  <Badge variant="destructive" className="h-5 px-2 text-xs">{mentorPendingCount}</Badge>
+                )}
+              </Link>
+            )}
+            {user?.role === "admin" && (
+              <Link href="/admin/requests" className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1">
+                Admin Requests
+                {adminPendingCount > 0 && (
+                  <Badge variant="secondary" className="h-5 px-2 text-xs">{adminPendingCount}</Badge>
+                )}
+              </Link>
+            )}
             
             {isAuthenticated && user ? (
               <div className="flex items-center gap-3">
@@ -102,7 +141,7 @@ export function Navigation() {
               </SheetTrigger>
               <SheetContent side="right" className="w-80">
                 <div className="flex flex-col space-y-4 mt-8">
-                  {navItems.map((item) => (
+                  {currentNavItems.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
@@ -120,6 +159,46 @@ export function Navigation() {
                       )}
                     </Link>
                   ))}
+                  <Link
+                    href="/apply-mentor"
+                    onClick={() => setIsOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <User className="h-5 w-5" />
+                      Apply as Mentor
+                    </div>
+                  </Link>
+                  {user?.role === "mentor" && (
+                    <Link
+                      href="/mentor/requests"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <MessageCircle className="h-5 w-5" />
+                        Mentor Requests
+                      </div>
+                      {mentorPendingCount > 0 && (
+                        <Badge variant="destructive" className="h-5 px-2 text-xs">{mentorPendingCount}</Badge>
+                      )}
+                    </Link>
+                  )}
+                  {user?.role === "admin" && (
+                    <Link
+                      href="/admin/requests"
+                      onClick={() => setIsOpen(false)}
+                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Bell className="h-5 w-5" />
+                        Admin Requests
+                      </div>
+                      {adminPendingCount > 0 && (
+                        <Badge variant="secondary" className="h-5 px-2 text-xs">{adminPendingCount}</Badge>
+                      )}
+                    </Link>
+                  )}
                   <Button asChild className="mt-4">
                     <Link href="/signup" onClick={() => setIsOpen(false)}>
                       Get Started

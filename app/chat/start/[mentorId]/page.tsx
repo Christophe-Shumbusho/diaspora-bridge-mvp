@@ -3,6 +3,9 @@
 import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { SAMPLE_CONVERSATIONS } from "@/lib/chat"
+import { upsertConversation, findConversationByMentor } from "@/lib/conversations-repo"
+import { getAllMentors } from "@/lib/mentors-repo"
+import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -15,21 +18,31 @@ interface StartChatPageProps {
 export default function StartChatPage({ params }: StartChatPageProps) {
   const router = useRouter()
   const resolvedParams = use(params)
+  const { user } = useAuth()
   const [step, setStep] = useState<"checking" | "pending" | "approved">("checking")
 
   useEffect(() => {
-    const existingConversation = SAMPLE_CONVERSATIONS.find(
-      (conv) => conv.mentorId === resolvedParams.mentorId
-    )
+    const existingConversation = findConversationByMentor(resolvedParams.mentorId)
 
     if (existingConversation) {
       // If conversation exists, go directly to it
       router.push(`/chat/${existingConversation.id}`)
     } else {
-      // Simulate creating a pending conversation
-      setTimeout(() => {
-        setStep("pending")
-      }, 1000)
+      // Create a pending conversation in the repo
+      if (user) {
+        const mentor = getAllMentors().find(m => m.id === resolvedParams.mentorId)
+        const newConvId = `conv-${Date.now()}`
+        upsertConversation({
+          id: newConvId,
+          mentorId: resolvedParams.mentorId,
+          mentorName: mentor?.name || "",
+          menteeId: user.id,
+          menteeName: user.name,
+          status: "pending",
+          createdAt: new Date(),
+        })
+      }
+      setTimeout(() => setStep("pending"), 500)
     }
   }, [resolvedParams.mentorId, router])
 

@@ -177,3 +177,4 @@ export function generateTeamsLink(): string {
   return `https://teams.microsoft.com/l/meetup-join/${meetingId}`
 }
 
+

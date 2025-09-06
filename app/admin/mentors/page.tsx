@@ -10,7 +10,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Plus, Edit, Trash2, Users, Eye, Shield } from "lucide-react"
-import { SAMPLE_MENTORS, type Mentor } from "@/lib/mentors"
+import { type Mentor } from "@/lib/mentors"
+import { getAllMentors, addMentor as repoAddMentor, updateMentor as repoUpdateMentor, deleteMentor as repoDeleteMentor } from "@/lib/mentors-repo"
 import { createMentorProfile } from "@/lib/auth"
 import { useAuth } from "@/lib/auth-context"
 
@@ -37,7 +38,10 @@ const AVAILABILITY_OPTIONS = [
 export default function MentorManagementPage() {
   const router = useRouter()
   const { user } = useAuth()
-  const [mentors, setMentors] = useState<Mentor[]>(SAMPLE_MENTORS)
+  const [mentors, setMentors] = useState<Mentor[]>([])
+  useEffect(() => {
+    setMentors(getAllMentors())
+  }, [])
   const [isAddingMentor, setIsAddingMentor] = useState(false)
   const [editingMentor, setEditingMentor] = useState<Mentor | null>(null)
   const [formData, setFormData] = useState({
@@ -93,7 +97,8 @@ export default function MentorManagementPage() {
       conversationStarters: formData.conversationStarters.split("\n").filter(Boolean),
     })
 
-    setMentors(prev => [...prev, newMentor])
+    repoAddMentor(newMentor)
+    setMentors(getAllMentors())
     setIsAddingMentor(false)
     resetForm()
   }
@@ -136,14 +141,16 @@ export default function MentorManagementPage() {
       conversationStarters: formData.conversationStarters.split("\n").filter(Boolean),
     }
 
-    setMentors(prev => prev.map(m => m.id === editingMentor.id ? updatedMentor : m))
+    repoUpdateMentor(updatedMentor)
+    setMentors(getAllMentors())
     setIsAddingMentor(false)
     setEditingMentor(null)
     resetForm()
   }
 
   const handleDeleteMentor = (mentorId: string) => {
-    setMentors(prev => prev.filter(m => m.id !== mentorId))
+    repoDeleteMentor(mentorId)
+    setMentors(getAllMentors())
   }
 
   const resetForm = () => {

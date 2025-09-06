@@ -3,11 +3,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, MessageCircle, Clock, User } from "lucide-react"
 import Link from "next/link"
-import { getConversationsForUser, formatTimeAgo, getTimeRemaining } from "@/lib/chat"
+import { formatTimeAgo, getTimeRemaining } from "@/lib/chat"
+import { useAuth } from "@/lib/auth-context"
+import { getConversationsForMentee } from "@/lib/conversations-repo"
 
 export default function ChatListPage() {
-  // In a real app, this would come from user session
-  const conversations = getConversationsForUser("user-1")
+  const { user } = useAuth()
+  const conversations = user && user.role === "mentee" ? getConversationsForMentee(user.id) : []
 
   return (
     <div className="min-h-screen bg-background px-4 py-8">
@@ -84,17 +86,26 @@ export default function ChatListPage() {
           ))}
         </div>
 
-        {conversations.length === 0 && (
+        {(!user || conversations.length === 0) && (
           <Card>
             <CardContent className="text-center py-16">
               <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-semibold mb-2">No conversations yet</h3>
-              <p className="text-muted-foreground mb-4">
-                Start connecting with mentors to begin meaningful conversations about your career.
-              </p>
-              <Button asChild>
-                <Link href="/mentors">Find Mentors</Link>
-              </Button>
+              <h3 className="text-lg font-semibold mb-2">{user ? "No conversations yet" : "Please log in"}</h3>
+              {user ? (
+                <>
+                  <p className="text-muted-foreground mb-4">Start connecting with mentors to begin meaningful conversations about your career.</p>
+                  <Button asChild>
+                    <Link href="/mentors">Find Mentors</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-muted-foreground mb-4">You need to be logged in to view conversations.</p>
+                  <Button asChild>
+                    <Link href="/signup">Get Started</Link>
+                  </Button>
+                </>
+              )}
             </CardContent>
           </Card>
         )}

@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Send, Clock, User, MessageCircle, CheckCircle, XCircle, Calendar, Video } from "lucide-react"
 import Link from "next/link"
-import { SAMPLE_CONVERSATIONS, SAMPLE_MESSAGES, getConversationMessages, formatTimeAgo, getTimeRemaining, type Message, type Conversation } from "@/lib/chat"
+import { SAMPLE_CONVERSATIONS, formatTimeAgo, getTimeRemaining, type Conversation } from "@/lib/chat"
+import { getMessages, sendMessage, type ChatMessage } from "@/lib/messages-repo"
 import { createMeeting, generateZoomLink, generateGoogleMeetLink, type Meeting } from "@/lib/meetings"
 import { useAuth } from "@/lib/auth-context"
 
@@ -23,7 +24,7 @@ export default function MentorChatPage({ params }: MentorChatPageProps) {
   const resolvedParams = use(params)
   const { user } = useAuth()
   const [newMessage, setNewMessage] = useState("")
-  const [messages, setMessages] = useState<Message[]>([])
+  const [messages, setMessages] = useState<ChatMessage[]>([])
   const [conversation, setConversation] = useState<Conversation | null>(null)
   const [showScheduleModal, setShowScheduleModal] = useState(false)
   const [scheduledMeetings, setScheduledMeetings] = useState<Meeting[]>([])
@@ -44,40 +45,21 @@ export default function MentorChatPage({ params }: MentorChatPageProps) {
     if (mentorConversations.length > 0) {
       const conv = mentorConversations[0] // For demo, use first conversation
       setConversation(conv)
-      const conversationMessages = getConversationMessages(conv.id)
-      setMessages(conversationMessages)
+      setMessages(getMessages(conv.id))
     }
   }, [resolvedParams.id])
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !conversation) return
-
-    const newMsg: Message = {
-      id: `msg-${Date.now()}`,
+    const saved = sendMessage({
+      conversationId: conversation.id,
       senderId: conversation.mentorId,
       senderName: conversation.mentorName,
       senderType: "mentor",
       content: newMessage,
-      timestamp: new Date(),
-      read: false,
-    }
-
-    setMessages((prev) => [...prev, newMsg])
+    })
+    setMessages((prev) => [...prev, saved])
     setNewMessage("")
-
-    // Simulate mentee response after 3 seconds
-    setTimeout(() => {
-      const menteeResponse: Message = {
-        id: `msg-${Date.now()}-response`,
-        senderId: conversation.menteeId,
-        senderName: conversation.menteeName,
-        senderType: "mentee",
-        content: "Thank you for your guidance! This is really helpful.",
-        timestamp: new Date(),
-        read: false,
-      }
-      setMessages((prev) => [...prev, menteeResponse])
-    }, 3000)
   }
 
   const handleApproveConversation = () => {
