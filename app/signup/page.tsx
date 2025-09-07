@@ -37,6 +37,7 @@ export default function SignupPage() {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
     careerField: "",
     goals: "",
     background: "",
@@ -70,6 +71,14 @@ export default function SignupPage() {
 
       // Save user to auth system
       login(menteeProfile)
+
+      // Store credentials (demo)
+      try {
+        const { saveCredential } = await import("@/lib/credentials")
+        if (formData.email && formData.password) {
+          saveCredential({ email: formData.email, role: "mentee", passwordHash: btoa(formData.password) })
+        }
+      } catch {}
 
       // Simulate API delay
       await new Promise((resolve) => setTimeout(resolve, 1000))
@@ -192,6 +201,16 @@ export default function SignupPage() {
                     onChange={(e) => updateFormData("email", e.target.value)}
                   />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password">Create Password</Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Create a password"
+                    value={formData.password}
+                    onChange={(e) => updateFormData("password", e.target.value)}
+                  />
+                </div>
               </>
             )}
 
@@ -254,6 +273,11 @@ export default function SignupPage() {
                   {isSubmitting ? "Creating Account..." : "Complete Signup"}
                 </Button>
               )}
+            </div>
+            <div className="pt-4 text-center text-sm text-muted-foreground">
+              Are you a mentor? <Link className="underline" href="/mentor/login">Login here</Link>
+              <br />
+              Already matched? <Link className="underline" href="/dashboard">Go to your mentee dashboard</Link>
             </div>
           </CardContent>
         </Card>

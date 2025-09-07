@@ -11,6 +11,8 @@ import Link from "next/link"
 import { SAMPLE_CONVERSATIONS, formatTimeAgo, getTimeRemaining } from "@/lib/chat"
 import { getMessages, sendMessage, type ChatMessage } from "@/lib/messages-repo"
 import { useAuth } from "@/lib/auth-context"
+import { findConversationById } from "@/lib/conversations-repo"
+import { getMenteeRequestById } from "@/lib/mentee-requests-repo"
 
 interface ConversationPageProps {
   params: Promise<{ id: string }>
@@ -23,7 +25,9 @@ export default function ConversationPage({ params }: ConversationPageProps) {
   const [newMessage, setNewMessage] = useState("")
   const [messages, setMessages] = useState<ChatMessage[]>([])
 
-  const conversation = SAMPLE_CONVERSATIONS.find((conv) => conv.id === resolvedParams.id)
+  // Try to find conversation in both repositories
+  const conversation = findConversationById(resolvedParams.id) || 
+                      SAMPLE_CONVERSATIONS.find((conv) => conv.id === resolvedParams.id)
 
   useEffect(() => {
     if (conversation) setMessages(getMessages(conversation.id))
@@ -31,6 +35,13 @@ export default function ConversationPage({ params }: ConversationPageProps) {
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !conversation || !user) return
+    
+    // Check if conversation is active (approved by mentor)
+    if (conversation.status !== "active") {
+      alert("This conversation is not yet active. Please wait for mentor approval.")
+      return
+    }
+    
     const saved = sendMessage({
       conversationId: conversation.id,
       senderId: user.id,
@@ -121,18 +132,43 @@ export default function ConversationPage({ params }: ConversationPageProps) {
 
         {/* Message Input */}
         <div className="border-t pt-4">
-          <div className="flex gap-2">
-            <Input
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder="Type your message..."
-              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-              className="flex-1"
-            />
-            <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
-              <Send className="h-4 w-4" />
-            </Button>
-          </div>
+          {conversation.status === "active" ? (
+            <div className="flex gap-2">
+              <Input
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
+                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                className="flex-1"
+              />
+              <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
+                <Send className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                {conversation.status === "pending" ? "Waiting for Mentor Approval" : "Conversation Not Available"}
+              </h3>
+              <p className="text-muted-foreground mb-4">
+                {conversation.status === "pending" 
+                  ? "Your mentor has 48 hours to approve this request. You'll receive an email notification once they respond."
+                  : "This conversation is not available for messaging."
+                }
+              </p>
+              {conversation.status === "pending" && (
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 max-w-md mx-auto">
+                  <p className="text-sm text-blue-800">
+                    <strong>What happens next?</strong><br />
+                    • Mentor reviews your request<br />
+                    • You'll get an email when approved<br />
+                    • Chat becomes available immediately
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

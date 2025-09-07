@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { addApplication, type MentorApplication } from "@/lib/applications-repo"
+import { saveCredential } from "@/lib/credentials"
 
 const CAREER_FIELDS = [
   "Technology & Software",
@@ -34,6 +35,7 @@ export default function ApplyMentorPage() {
     experience: "",
     bio: "",
     expertise: "",
+    password: "",
   })
   const [submitted, setSubmitted] = useState(false)
 
@@ -49,10 +51,14 @@ export default function ApplyMentorPage() {
       experience: parseInt(form.experience || "0"),
       bio: form.bio,
       expertise: form.expertise.split(",").map(s => s.trim()).filter(Boolean),
+      passwordHash: btoa(form.password),
       createdAt: new Date(),
       status: "pending",
     }
     addApplication(app)
+    if (form.email && form.password) {
+      saveCredential({ email: form.email, role: "mentor", passwordHash: btoa(form.password) })
+    }
     setSubmitted(true)
   }
 
@@ -120,6 +126,15 @@ export default function ApplyMentorPage() {
               <div>
                 <Label>Experience (years)</Label>
                 <Input type="number" value={form.experience} onChange={(e) => update("experience", e.target.value)} />
+              </div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div>
+                <Label>Password (for mentor login)</Label>
+                <Input type="password" value={form.password} onChange={(e) => update("password", e.target.value)} />
+              </div>
+              <div className="text-xs text-muted-foreground flex items-end">
+                Use a strong password. You’ll use this to access your dashboard.
               </div>
             </div>
             <div>

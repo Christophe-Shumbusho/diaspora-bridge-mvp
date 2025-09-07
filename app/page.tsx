@@ -30,7 +30,7 @@ export default function HomePage() {
               size="lg"
               className="text-lg px-10 py-4 shadow-glow hover:shadow-lg transition-all duration-300"
             >
-              <Link href="/signup">
+              <Link href="/mentee-signup">
                 Find Your Mentor
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
@@ -296,7 +296,7 @@ export default function HomePage() {
               size="lg"
               className="text-lg px-12 py-4 shadow-glow hover:shadow-lg transition-all duration-300"
             >
-              <Link href="/signup">
+              <Link href="/mentee-signup">
                 Get Started Today
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>

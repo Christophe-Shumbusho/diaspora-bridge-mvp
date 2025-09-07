@@ -13,6 +13,7 @@ export interface MentorApplication {
   experience: number
   bio: string
   expertise: string[]
+  passwordHash?: string
   createdAt: Date
   status: "pending" | "approved" | "declined"
 }

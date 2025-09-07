@@ -358,6 +358,120 @@ export async function sendMentorMatchNotification(menteeEmail: string, mentorId:
   return emailTemplate
 }
 
+export function generateMentorRequestEmail(data: NotificationData & {
+  menteeEmail: string
+  careerQuestion: string
+  experience: string
+  goals: string
+}): EmailTemplate {
+  const { mentorName, menteeName, menteeEmail, careerQuestion, experience, goals, conversationId, expiresAt } = data
+
+  const subject = `New Mentee Request: ${menteeName}`
+
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>New Mentee Request - Diaspora Bridge</title>
+      <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #374151; margin: 0; padding: 0; background-color: #f9fafb; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; }
+        .header { background-color: #059669; color: white; padding: 32px 24px; text-align: center; }
+        .header h1 { margin: 0; font-size: 28px; font-weight: bold; }
+        .content { padding: 32px 24px; }
+        .mentee-card { background-color: #f1f5f9; border-radius: 8px; padding: 24px; margin: 24px 0; }
+        .mentee-name { font-size: 20px; font-weight: bold; color: #059669; margin-bottom: 8px; }
+        .question-box { background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; margin: 16px 0; }
+        .cta-button { display: inline-block; background-color: #059669; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 16px 0; }
+        .decline-button { display: inline-block; background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 600; margin: 16px 0; margin-left: 12px; }
+        .footer { background-color: #f9fafb; padding: 24px; text-align: center; color: #6b7280; font-size: 14px; }
+        .expiry-notice { background-color: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 16px; margin: 16px 0; }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h1>🎯 New Mentee Request</h1>
+          <p>A young Rwandan is seeking your guidance</p>
+        </div>
+        
+        <div class="content">
+          <p>Hi ${mentorName},</p>
+          <p>A mentee has requested your guidance and expertise. Here are the details:</p>
+          
+          <div class="mentee-card">
+            <div class="mentee-name">${menteeName}</div>
+            <p><strong>Email:</strong> ${menteeEmail}</p>
+            <p><strong>Experience:</strong> ${experience}</p>
+            <p><strong>Goals:</strong> ${goals}</p>
+          </div>
+          
+          <div class="question-box">
+            <strong>Their Question:</strong><br>
+            "${careerQuestion}"
+          </div>
+          
+          ${expiresAt ? `
+          <div class="expiry-notice">
+            <strong>⏰ Important:</strong> You have 48 hours to respond to this request. 
+            This request expires on ${expiresAt.toLocaleDateString()} at ${expiresAt.toLocaleTimeString()}.
+          </div>
+          ` : ""}
+          
+          <div style="text-align: center; margin: 32px 0;">
+            <a href="${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/mentor/dashboard" class="cta-button">
+              Review & Approve Request
+            </a>
+          </div>
+          
+          <p>By approving this request, you'll be helping a young Rwandan advance their career. Your guidance can make a real difference in their professional journey.</p>
+          
+          <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;">
+          
+          <h3>What to expect:</h3>
+          <ul>
+            <li>Once approved, you'll be connected via our chat platform</li>
+            <li>The mentee will receive an email notification to start the conversation</li>
+            <li>You can set your own availability and conversation limits</li>
+            <li>We provide conversation starters and guidance resources</li>
+          </ul>
+        </div>
+        
+        <div class="footer">
+          <p>This email was sent by Diaspora Bridge - Connecting Rwandan youth with diaspora mentors</p>
+          <p>If you have any questions, please contact us at support@diasporabridge.com</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `
+
+  const text = `
+    Hi ${mentorName},
+    
+    A mentee has requested your guidance and expertise.
+    
+    Mentee: ${menteeName} (${menteeEmail})
+    Experience: ${experience}
+    Goals: ${goals}
+    
+    Their Question: "${careerQuestion}"
+    
+    ${expiresAt ? `Important: You have 48 hours to respond. This request expires on ${expiresAt.toLocaleDateString()}.` : ""}
+    
+    Review and approve: ${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/mentor/dashboard
+    
+    By approving this request, you'll be helping a young Rwandan advance their career.
+    
+    Best regards,
+    The Diaspora Bridge Team
+  `
+
+  return { subject, html, text }
+}
+
 export async function sendMentorRequestNotification(mentorEmail: string, menteeData: {
   name: string
   email: string
@@ -368,10 +482,14 @@ export async function sendMentorRequestNotification(mentorEmail: string, menteeD
   console.log(`📧 Sending mentor request notification to ${mentorEmail}`)
   
   // Simulate email sending
-  const notificationData: NotificationData = {
+  const notificationData = {
     mentorName: "Dr. Aline Uwimana", // This would be the actual mentor
     menteeName: menteeData.name,
+    menteeEmail: menteeData.email,
     mentorField: menteeData.careerField,
+    careerQuestion: "How do I advance in " + menteeData.careerField + "?", // This would come from the form
+    experience: menteeData.experience,
+    goals: menteeData.goals,
     conversationId: "conv-1",
     expiresAt: new Date(Date.now() + 48 * 60 * 60 * 1000),
   }
