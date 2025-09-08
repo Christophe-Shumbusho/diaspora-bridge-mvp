@@ -32,6 +32,14 @@ export function deleteMentor(id: string): void {
   writeJson(KEY, list)
 }
 
+export function getMentorByEmail(email: string): Mentor | undefined {
+  return getAllMentors().find((m) => m.email === email)
+}
+
+export function getMentorById(id: string): Mentor | undefined {
+  return getAllMentors().find((m) => m.id === id)
+}
+
 
 
 

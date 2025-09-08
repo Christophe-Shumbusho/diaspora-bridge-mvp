@@ -301,14 +301,6 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button
-              variant="outline"
-              size="lg"
-              className="text-lg px-12 py-4 border-2 hover:bg-muted/50 bg-transparent"
-              asChild
-            >
-              <Link href="/dashboard">View Dashboard</Link>
-            </Button>
           </div>
           <p className="text-sm text-muted-foreground">
             ✨ Free forever • No credit card required • Get matched in 24 hours

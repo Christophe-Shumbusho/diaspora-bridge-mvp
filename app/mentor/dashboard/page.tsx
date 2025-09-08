@@ -7,18 +7,28 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { ArrowLeft, MessageCircle, Clock, User, Search, Filter } from "lucide-react"
 import Link from "next/link"
-import { SAMPLE_CONVERSATIONS, formatTimeAgo, getTimeRemaining } from "@/lib/chat"
+import { formatTimeAgo, getTimeRemaining } from "@/lib/chat"
 import { useAuth } from "@/lib/auth-context"
+import { getConversationsForCurrentUser, approveConversation, declineConversation } from "@/lib/conversation-service"
 
 export default function MentorDashboardPage() {
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "active" | "pending" | "closed">("all")
+  const [conversations, setConversations] = useState(getConversationsForCurrentUser())
+
+  const handleApprove = (conversationId: string) => {
+    approveConversation(conversationId)
+    setConversations(getConversationsForCurrentUser())
+  }
+
+  const handleDecline = (conversationId: string) => {
+    declineConversation(conversationId)
+    setConversations(getConversationsForCurrentUser())
+  }
 
   // Filter conversations for this mentor
-  const mentorConversations = SAMPLE_CONVERSATIONS.filter(conv => 
-    conv.mentorId === "1" // In a real app, this would be user.id
-  )
+  const mentorConversations = conversations
 
   const filteredConversations = mentorConversations.filter(conv => {
     const matchesSearch = conv.menteeName.toLowerCase().includes(searchTerm.toLowerCase())
@@ -186,12 +196,23 @@ export default function MentorDashboardPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     {getStatusBadge(conversation.status)}
-                    <Button asChild>
-                      <Link href={`/mentor/chat/${conversation.id}`}>
-                        <MessageCircle className="h-4 w-4 mr-2" />
-                        {conversation.status === "pending" ? "Review" : "Chat"}
-                      </Link>
-                    </Button>
+                    {conversation.status === "pending" ? (
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={() => handleApprove(conversation.id)}>
+                          Approve
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => handleDecline(conversation.id)}>
+                          Decline
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button asChild>
+                        <Link href={`/mentor/chat/${conversation.id}`}>
+                          <MessageCircle className="h-4 w-4 mr-2" />
+                          Chat
+                        </Link>
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

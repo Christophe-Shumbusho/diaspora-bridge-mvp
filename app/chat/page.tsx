@@ -1,3 +1,5 @@
+'use client'
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -5,11 +7,11 @@ import { ArrowLeft, MessageCircle, Clock, User } from "lucide-react"
 import Link from "next/link"
 import { formatTimeAgo, getTimeRemaining } from "@/lib/chat"
 import { useAuth } from "@/lib/auth-context"
-import { getConversationsForMentee } from "@/lib/conversations-repo"
+import { getConversationsForCurrentUser } from "@/lib/conversation-service"
 
 export default function ChatListPage() {
   const { user } = useAuth()
-  const conversations = user && user.role === "mentee" ? getConversationsForMentee(user.id) : []
+  const conversations = user ? getConversationsForCurrentUser() : []
 
   return (
     <div className="min-h-screen bg-background px-4 py-8">

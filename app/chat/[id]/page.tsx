@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useEffect, useState } from "react"
+import { use, useEffect, useState, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Send, Clock, User, MessageCircle } from "lucide-react"
 import Link from "next/link"
-import { SAMPLE_CONVERSATIONS, formatTimeAgo, getTimeRemaining } from "@/lib/chat"
+import { formatTimeAgo, getTimeRemaining } from "@/lib/chat"
 import { getMessages, sendMessage, type ChatMessage } from "@/lib/messages-repo"
 import { useAuth } from "@/lib/auth-context"
+import { getAllConversations } from "@/lib/conversations-repo"
 
 interface ConversationPageProps {
   params: Promise<{ id: string }>
@@ -23,11 +24,17 @@ export default function ConversationPage({ params }: ConversationPageProps) {
   const [newMessage, setNewMessage] = useState("")
   const [messages, setMessages] = useState<ChatMessage[]>([])
 
-  const conversation = SAMPLE_CONVERSATIONS.find((conv) => conv.id === resolvedParams.id)
+  // Use useMemo to prevent recreation on every render
+  const conversation = useMemo(() => {
+    return getAllConversations().find((conv) => conv.id === resolvedParams.id)
+  }, [resolvedParams.id])
 
+  // Now use conversation.id instead of conversation object
   useEffect(() => {
-    if (conversation) setMessages(getMessages(conversation.id))
-  }, [conversation])
+    if (conversation?.id) {
+      setMessages(getMessages(conversation.id))
+    }
+  }, [conversation?.id]) // Only depend on the id, not the whole object
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !conversation || !user) return
@@ -83,7 +90,7 @@ export default function ConversationPage({ params }: ConversationPageProps) {
                 </div>
               </div>
             </div>
-            <Badge variant="outline">{conversation.field || "Technology & Software"}</Badge>
+            <Badge variant="outline">Mentoring Session</Badge>
           </div>
         </div>
       </div>

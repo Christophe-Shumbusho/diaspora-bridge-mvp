@@ -1,7 +1,8 @@
 export interface Mentor {
   id: string
   name: string
-  email: string  // ADDED THIS LINE TO FIX THE ERROR
+  email: string
+  role: "mentor"
   title: string
   company: string
   field: string
@@ -12,13 +13,15 @@ export interface Mentor {
   availability: "available" | "busy" | "unavailable"
   imageUrl: string
   conversationStarters: string[]
+  createdAt: Date
 }
 
 export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "1",
     name: "Dr. Aline Uwimana",
-    email: "aline.uwimana@google.com",  // ADDED EMAIL
+    email: "aline.uwimana@google.com",
+    role: "mentor" as const,
     title: "Senior Software Engineer",
     company: "Google",
     field: "Technology & Software",
@@ -26,18 +29,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 8,
     bio: "Passionate about building scalable systems and mentoring the next generation of African tech talent. I've worked on Google Search infrastructure and love helping young developers navigate their careers.",
     expertise: ["Software Engineering", "System Design", "Career Growth", "Technical Leadership"],
-    availability: "available",
+    availability: "available" as const,
     imageUrl: "/african-woman-software-engineer.png",
     conversationStarters: [
       "What programming languages should I focus on as a beginner?",
       "How do I prepare for technical interviews at big tech companies?",
       "What's the best way to build a strong portfolio as a developer?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "2",
     name: "Jean-Baptiste Nzeyimana",
-    email: "jean.nzeyimana@gs.com",  // ADDED EMAIL
+    email: "jean.nzeyimana@gs.com",
+    role: "mentor" as const,
     title: "Investment Director",
     company: "Goldman Sachs",
     field: "Finance & Banking",
@@ -45,18 +50,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 12,
     bio: "Leading investment strategies for emerging markets with a focus on African opportunities. I'm passionate about financial literacy and helping young professionals understand global finance.",
     expertise: ["Investment Banking", "Financial Analysis", "Market Strategy", "Leadership"],
-    availability: "available",
+    availability: "available" as const,
     imageUrl: "/professional-african-man-finance-suit.png",
     conversationStarters: [
       "How do I break into investment banking?",
       "What skills are most important for a career in finance?",
       "How can I understand global financial markets better?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "3",
     name: "Dr. Grace Mukamana",
-    email: "grace.mukamana@jhmi.edu",  // ADDED EMAIL
+    email: "grace.mukamana@jhmi.edu",
+    role: "mentor" as const,
     title: "Pediatric Surgeon",
     company: "Johns Hopkins Hospital",
     field: "Healthcare & Medicine",
@@ -64,18 +71,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 15,
     bio: "Dedicated to improving healthcare outcomes for children globally. I've led medical missions back to Rwanda and am passionate about mentoring aspiring healthcare professionals.",
     expertise: ["Medical Career Path", "Specialization", "Medical School", "Healthcare Leadership"],
-    availability: "busy",
+    availability: "busy" as const,
     imageUrl: "/professional-african-woman-doctor-medical.png",
     conversationStarters: [
       "What's the path to becoming a doctor?",
       "How do I choose a medical specialization?",
       "What are the challenges of working in healthcare?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "4",
     name: "Patrick Rwigema",
-    email: "patrick@afritech.ventures",  // ADDED EMAIL
+    email: "patrick@afritech.ventures",
+    role: "mentor" as const,
     title: "Founder & CEO",
     company: "AfriTech Ventures",
     field: "Business & Entrepreneurship",
@@ -83,13 +92,14 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 10,
     bio: "Serial entrepreneur focused on building technology solutions for African markets. I've raised over $50M for various startups and love helping young entrepreneurs validate and scale their ideas.",
     expertise: ["Entrepreneurship", "Fundraising", "Business Strategy", "Startup Growth"],
-    availability: "available",
+    availability: "available" as const,
     imageUrl: "/professional-african-man-entrepreneur-business.png",
     conversationStarters: [
       "How do I validate my business idea?",
       "What's the best way to approach investors?",
       "How do I build a strong founding team?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "5",

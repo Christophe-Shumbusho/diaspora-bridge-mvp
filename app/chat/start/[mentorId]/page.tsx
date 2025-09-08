@@ -2,9 +2,9 @@
 
 import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { SAMPLE_CONVERSATIONS } from "@/lib/chat"
-import { upsertConversation, findConversationByMentor } from "@/lib/conversations-repo"
-import { getAllMentors } from "@/lib/mentors-repo"
+import { createConversation } from "@/lib/conversation-service"
+import { getMentorById } from "@/lib/mentors-repo"
+import { getAllConversations } from "@/lib/conversations-repo"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -22,34 +22,48 @@ export default function StartChatPage({ params }: StartChatPageProps) {
   const [step, setStep] = useState<"checking" | "pending" | "approved">("checking")
 
   useEffect(() => {
-    const existingConversation = findConversationByMentor(resolvedParams.mentorId)
+    if (!user) {
+      router.push('/signup')
+      return
+    }
+
+    // Check if conversation already exists
+    const existingConversation = getAllConversations().find(conv => 
+      conv.mentorId === resolvedParams.mentorId && conv.menteeId === user.id
+    )
 
     if (existingConversation) {
       // If conversation exists, go directly to it
       router.push(`/chat/${existingConversation.id}`)
     } else {
-      // Create a pending conversation in the repo
-      if (user) {
-        const mentor = getAllMentors().find(m => m.id === resolvedParams.mentorId)
-        const newConvId = `conv-${Date.now()}`
-        upsertConversation({
-          id: newConvId,
+      // Create a pending conversation
+      try {
+        const newConversation = createConversation({
           mentorId: resolvedParams.mentorId,
-          mentorName: mentor?.name || "",
           menteeId: user.id,
-          menteeName: user.name,
-          status: "pending",
-          createdAt: new Date(),
+          menteeName: user.name
         })
+        setTimeout(() => setStep("pending"), 500)
+      } catch (error) {
+        console.error('Failed to create conversation:', error)
+        router.push('/mentors')
       }
-      setTimeout(() => setStep("pending"), 500)
     }
-  }, [resolvedParams.mentorId, router])
+  }, [resolvedParams.mentorId, router, user])
 
   const handleSimulateApproval = () => {
     setStep("approved")
     setTimeout(() => {
-      router.push("/chat/conv-1")
+      // Find the conversation we just created and redirect to it
+      const conversations = getAllConversations()
+      const myConversation = conversations.find(conv => 
+        conv.mentorId === resolvedParams.mentorId && conv.menteeId === user?.id
+      )
+      if (myConversation) {
+        router.push(`/chat/${myConversation.id}`)
+      } else {
+        router.push("/chat")
+      }
     }, 1500)
   }
 
