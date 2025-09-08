@@ -29,10 +29,13 @@ const CAREER_FIELDS = [
   "Other",
 ]
 
+// Define the availability type
+type AvailabilityStatus = "available" | "busy" | "unavailable"
+
 const AVAILABILITY_OPTIONS = [
-  { value: "available", label: "Available", color: "bg-green-500" },
-  { value: "busy", label: "Busy", color: "bg-yellow-500" },
-  { value: "unavailable", label: "Unavailable", color: "bg-red-500" },
+  { value: "available" as const, label: "Available", color: "bg-green-500" },
+  { value: "busy" as const, label: "Busy", color: "bg-yellow-500" },
+  { value: "unavailable" as const, label: "Unavailable", color: "bg-red-500" },
 ]
 
 export default function MentorManagementPage() {
@@ -54,7 +57,7 @@ export default function MentorManagementPage() {
     experience: "",
     bio: "",
     expertise: "",
-    availability: "available" as const,
+    availability: "available" as AvailabilityStatus,
     imageUrl: "",
     conversationStarters: "",
   })
@@ -107,7 +110,7 @@ export default function MentorManagementPage() {
     setEditingMentor(mentor)
     setFormData({
       name: mentor.name,
-      email: mentor.email,
+      email: mentor.email, // This should now work if Mentor type includes email
       title: mentor.title,
       company: mentor.company,
       field: mentor.field,
@@ -315,7 +318,10 @@ export default function MentorManagementPage() {
                 </div>
                 <div>
                   <Label htmlFor="availability">Availability</Label>
-                  <Select value={formData.availability} onValueChange={(value: any) => updateFormData("availability", value)}>
+                  <Select 
+                    value={formData.availability} 
+                    onValueChange={(value: AvailabilityStatus) => updateFormData("availability", value)}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>

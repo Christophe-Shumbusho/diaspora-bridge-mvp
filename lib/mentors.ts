@@ -1,6 +1,7 @@
 export interface Mentor {
   id: string
   name: string
+  email: string  // ADDED THIS LINE TO FIX THE ERROR
   title: string
   company: string
   field: string
@@ -17,6 +18,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "1",
     name: "Dr. Aline Uwimana",
+    email: "aline.uwimana@google.com",  // ADDED EMAIL
     title: "Senior Software Engineer",
     company: "Google",
     field: "Technology & Software",
@@ -35,6 +37,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "2",
     name: "Jean-Baptiste Nzeyimana",
+    email: "jean.nzeyimana@gs.com",  // ADDED EMAIL
     title: "Investment Director",
     company: "Goldman Sachs",
     field: "Finance & Banking",
@@ -53,6 +56,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "3",
     name: "Dr. Grace Mukamana",
+    email: "grace.mukamana@jhmi.edu",  // ADDED EMAIL
     title: "Pediatric Surgeon",
     company: "Johns Hopkins Hospital",
     field: "Healthcare & Medicine",
@@ -71,6 +75,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "4",
     name: "Patrick Rwigema",
+    email: "patrick@afritech.ventures",  // ADDED EMAIL
     title: "Founder & CEO",
     company: "AfriTech Ventures",
     field: "Business & Entrepreneurship",
@@ -89,6 +94,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "5",
     name: "Marie Claire Ingabire",
+    email: "marie.ingabire@unilever.com",  // ADDED EMAIL
     title: "Marketing Director",
     company: "Unilever",
     field: "Marketing & Communications",
@@ -107,6 +113,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "6",
     name: "Emmanuel Hakizimana",
+    email: "emmanuel.hakizimana@arup.com",  // ADDED EMAIL
     title: "Civil Engineer",
     company: "Arup",
     field: "Engineering",
@@ -125,6 +132,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "7",
     name: "Dr. Sarah Uwase",
+    email: "sarah.uwase@mit.edu",  // ADDED EMAIL
     title: "Research Scientist",
     company: "MIT",
     field: "Education & Research",
@@ -143,6 +151,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "8",
     name: "James Mugenzi",
+    email: "james.mugenzi@microsoft.com",  // ADDED EMAIL
     title: "Senior Legal Counsel",
     company: "Microsoft",
     field: "Law & Legal Services",
@@ -161,6 +170,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "9",
     name: "Fatima Niyonsaba",
+    email: "fatima.niyonsaba@creativestudio.fr",  // ADDED EMAIL
     title: "Creative Director",
     company: "Freelance",
     field: "Arts & Creative Industries",
@@ -179,6 +189,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
   {
     id: "10",
     name: "David Nkurunziza",
+    email: "david.nkurunziza@unicef.org",  // ADDED EMAIL
     title: "Program Director",
     company: "UNICEF",
     field: "Non-profit & Social Impact",
