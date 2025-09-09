@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle, SheetHeader } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import { Menu, MessageCircle, Users, Bell, Home, Search, LogOut, User, Shield } from "lucide-react"
+import { Menu, MessageCircle, Users, Bell, Home, Search, LogOut, User, Shield, Settings } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
-import { getConversationsForMentor } from "@/lib/conversations-repo"
-import { getAllApplications } from "@/lib/applications-repo"
+import { db } from "@/lib/database"
 
 export function Navigation() {
   const [isOpen, setIsOpen] = useState(false)
@@ -16,38 +15,55 @@ export function Navigation() {
   const [mentorPendingCount, setMentorPendingCount] = useState(0)
   const [adminPendingCount, setAdminPendingCount] = useState(0)
 
-  // In a real app, these would come from user context/state
-  const unreadMessages = 2
-  const activeConnections = 1
+  // Get navigation items based on user role
+  const getNavItems = () => {
+    if (!isAuthenticated || !user) {
+      return [
+        { href: "/", label: "Home", icon: Home },
+      ]
+    }
 
-  const navItems = [
-    { href: "/", label: "Home", icon: Home },
-    { href: "/mentors", label: "Browse Mentors", icon: Users },
-    { href: "/matches", label: "Your Matches", icon: Search },
-    { href: "/chat", label: "Conversations", icon: MessageCircle, badge: unreadMessages },
-    { href: "/notifications", label: "Email Settings", icon: Bell },
-  ]
+    switch (user.role) {
+      case "mentee":
+        const menteeNavItems = [
+          { href: "/mentee/dashboard", label: "Dashboard", icon: Home },
+          { href: "/matches", label: "Find Mentors", icon: Search },
+          { href: "/chat", label: "Conversations", icon: MessageCircle },
+        ]
+        return [
+          ...menteeNavItems,
+          { href: "/", label: "Home", icon: Home },
+        ]
+      case "mentor":
+        return [
+          { href: "/", label: "Home", icon: Home },
+          { href: "/mentor/dashboard", label: "Dashboard", icon: Users },
+        ]
+      case "admin":
+        return [
+          { href: "/", label: "Home", icon: Home },
+          { href: "/admin/dashboard", label: "Admin Dashboard", icon: Settings },
+        ]
+      default:
+        return [
+          { href: "/", label: "Home", icon: Home },
+        ]
+    }
+  }
 
-  // Add mentor-specific navigation items
-  const mentorNavItems = [
-    { href: "/mentor/dashboard", label: "Mentor Dashboard", icon: Users },
-    { href: "/mentors", label: "Browse Mentors", icon: Users },
-    { href: "/notifications", label: "Email Settings", icon: Bell },
-  ]
-
-  const currentNavItems = user?.role === "mentor" ? mentorNavItems : navItems
+  const currentNavItems = getNavItems()
 
   useEffect(() => {
     if (user?.role === "mentor") {
-      const list = getConversationsForMentor(user.id).filter((c) => c.status === "pending")
-      setMentorPendingCount(list.length)
+      const requests = db.getMentorshipRequestsForMentor(user.id).filter(r => r.status === "pending")
+      setMentorPendingCount(requests.length)
     } else {
       setMentorPendingCount(0)
     }
 
     if (user?.role === "admin") {
-      const apps = getAllApplications().filter((a) => a.status === "pending")
-      setAdminPendingCount(apps.length)
+      const pendingMentors = db.getPendingMentors()
+      setAdminPendingCount(pendingMentors.length)
     } else {
       setAdminPendingCount(0)
     }
@@ -75,31 +91,18 @@ export function Navigation() {
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
-                {item.badge && item.badge > 0 && (
-                  <Badge variant="destructive" className="h-5 w-5 p-0 flex items-center justify-center text-xs">
-                    {item.badge}
-                  </Badge>
-                )}
               </Link>
             ))}
-            <Link href="/apply-mentor" className="text-muted-foreground hover:text-foreground text-sm">
-              Apply as Mentor
-            </Link>
-            {user?.role === "mentor" && (
-              <Link href="/mentor/requests" className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1">
-                Mentor Requests
-                {mentorPendingCount > 0 && (
-                  <Badge variant="destructive" className="h-5 px-2 text-xs">{mentorPendingCount}</Badge>
-                )}
-              </Link>
+            
+            {user?.role === "mentor" && mentorPendingCount > 0 && (
+              <Badge variant="destructive" className="h-5 px-2 text-xs">
+                {mentorPendingCount} pending
+              </Badge>
             )}
-            {user?.role === "admin" && (
-              <Link href="/admin/requests" className="text-muted-foreground hover:text-foreground text-sm flex items-center gap-1">
-                Admin Requests
-                {adminPendingCount > 0 && (
-                  <Badge variant="secondary" className="h-5 px-2 text-xs">{adminPendingCount}</Badge>
-                )}
-              </Link>
+            {user?.role === "admin" && adminPendingCount > 0 && (
+              <Badge variant="secondary" className="h-5 px-2 text-xs">
+                {adminPendingCount} pending
+              </Badge>
             )}
             
             {isAuthenticated && user ? (
@@ -119,9 +122,9 @@ export function Navigation() {
             ) : (
               <div className="flex items-center gap-2">
                 <Button variant="outline" size="sm" asChild>
-                  <Link href="/admin/login">
+                  <Link href="/login">
                     <Shield className="h-4 w-4 mr-2" />
-                    Admin
+                    Login
                   </Link>
                 </Button>
                 <Button asChild>
@@ -140,70 +143,52 @@ export function Navigation() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="right" className="w-80">
+                <SheetHeader>
+                  <SheetTitle>Navigation Menu</SheetTitle>
+                </SheetHeader>
                 <div className="flex flex-col space-y-4 mt-8">
                   {currentNavItems.map((item) => (
                     <Link
                       key={item.href}
                       href={item.href}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
+                      className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
                     >
-                      <div className="flex items-center gap-3">
-                        <item.icon className="h-5 w-5" />
-                        {item.label}
-                      </div>
-                      {item.badge && item.badge > 0 && (
-                        <Badge variant="destructive" className="h-5 w-5 p-0 flex items-center justify-center text-xs">
-                          {item.badge}
-                        </Badge>
-                      )}
+                      <item.icon className="h-5 w-5" />
+                      {item.label}
                     </Link>
                   ))}
-                  <Link
-                    href="/apply-mentor"
-                    onClick={() => setIsOpen(false)}
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <User className="h-5 w-5" />
-                      Apply as Mentor
+                  
+                  {!isAuthenticated && (
+                    <div className="space-y-2 mt-4">
+                      <Button asChild className="w-full">
+                        <Link href="/signup" onClick={() => setIsOpen(false)}>
+                          Get Started
+                        </Link>
+                      </Button>
+                      <Button variant="outline" asChild className="w-full">
+                        <Link href="/login" onClick={() => setIsOpen(false)}>
+                          Login
+                        </Link>
+                      </Button>
                     </div>
-                  </Link>
-                  {user?.role === "mentor" && (
-                    <Link
-                      href="/mentor/requests"
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <MessageCircle className="h-5 w-5" />
-                        Mentor Requests
-                      </div>
-                      {mentorPendingCount > 0 && (
-                        <Badge variant="destructive" className="h-5 px-2 text-xs">{mentorPendingCount}</Badge>
-                      )}
-                    </Link>
                   )}
-                  {user?.role === "admin" && (
-                    <Link
-                      href="/admin/requests"
-                      onClick={() => setIsOpen(false)}
-                      className="flex items-center justify-between p-3 rounded-lg hover:bg-muted transition-colors"
-                    >
-                      <div className="flex items-center gap-3">
-                        <Bell className="h-5 w-5" />
-                        Admin Requests
+                  
+                  {isAuthenticated && user && (
+                    <div className="mt-4 pt-4 border-t">
+                      <div className="flex items-center gap-2 mb-4 p-3">
+                        <User className="h-4 w-4" />
+                        <span className="text-sm">{user.name}</span>
+                        <Badge variant="outline" className="text-xs">
+                          {user.role}
+                        </Badge>
                       </div>
-                      {adminPendingCount > 0 && (
-                        <Badge variant="secondary" className="h-5 px-2 text-xs">{adminPendingCount}</Badge>
-                      )}
-                    </Link>
+                      <Button variant="outline" onClick={logout} className="w-full">
+                        <LogOut className="h-4 w-4 mr-2" />
+                        Logout
+                      </Button>
+                    </div>
                   )}
-                  <Button asChild className="mt-4">
-                    <Link href="/signup" onClick={() => setIsOpen(false)}>
-                      Get Started
-                    </Link>
-                  </Button>
                 </div>
               </SheetContent>
             </Sheet>

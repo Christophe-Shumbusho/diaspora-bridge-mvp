@@ -105,6 +105,7 @@ export const SAMPLE_MENTORS: Mentor[] = [
     id: "5",
     name: "Marie Claire Ingabire",
     email: "marie.ingabire@unilever.com",  // ADDED EMAIL
+    role: "mentor" as const,
     title: "Marketing Director",
     company: "Unilever",
     field: "Marketing & Communications",
@@ -112,18 +113,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 9,
     bio: "Leading global marketing campaigns for consumer brands across Africa and Europe. I'm passionate about storytelling and helping young marketers understand the power of authentic brand communication.",
     expertise: ["Brand Marketing", "Digital Strategy", "Consumer Insights", "Campaign Management"],
-    availability: "available",
+    availability: "available" as const,
     imageUrl: "/professional-african-woman-marketing-creative.png",
     conversationStarters: [
       "How do I build a career in marketing?",
       "What makes a successful marketing campaign?",
       "How important is digital marketing today?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "6",
     name: "Emmanuel Hakizimana",
     email: "emmanuel.hakizimana@arup.com",  // ADDED EMAIL
+    role: "mentor" as const,
     title: "Civil Engineer",
     company: "Arup",
     field: "Engineering",
@@ -131,18 +134,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 11,
     bio: "Designing sustainable infrastructure projects across North America and Africa. I believe in engineering solutions that create positive impact for communities and the environment.",
     expertise: ["Civil Engineering", "Project Management", "Sustainable Design", "Infrastructure"],
-    availability: "unavailable",
+    availability: "unavailable" as const,
     imageUrl: "/professional-african-man-engineer-construction.png",
     conversationStarters: [
       "What does a career in engineering look like?",
       "How do I choose an engineering specialization?",
       "What's the future of sustainable engineering?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "7",
     name: "Dr. Sarah Uwase",
     email: "sarah.uwase@mit.edu",  // ADDED EMAIL
+    role: "mentor" as const,
     title: "Research Scientist",
     company: "MIT",
     field: "Education & Research",
@@ -150,18 +155,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 7,
     bio: "Conducting groundbreaking research in renewable energy and climate science. I'm passionate about making science accessible and inspiring the next generation of African researchers.",
     expertise: ["Research Methods", "Academic Writing", "Grant Writing", "Scientific Communication"],
-    availability: "available",
+    availability: "available" as const,
     imageUrl: "/placeholder.svg",
     conversationStarters: [
       "How do I get started in research?",
       "What's the process for applying to graduate school?",
       "How can I make my research more impactful?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "8",
     name: "James Mugenzi",
     email: "james.mugenzi@microsoft.com",  // ADDED EMAIL
+    role: "mentor" as const,
     title: "Senior Legal Counsel",
     company: "Microsoft",
     field: "Law & Legal Services",
@@ -169,18 +176,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 13,
     bio: "Specializing in technology law and intellectual property. I help tech companies navigate complex legal landscapes and am passionate about mentoring young lawyers interested in tech law.",
     expertise: ["Technology Law", "Intellectual Property", "Contract Negotiation", "Corporate Law"],
-    availability: "available",
+    availability: "available" as const,
     imageUrl: "/placeholder.svg",
     conversationStarters: [
       "How do I transition into technology law?",
       "What skills are essential for corporate lawyers?",
       "How important is understanding technology for lawyers?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "9",
     name: "Fatima Niyonsaba",
     email: "fatima.niyonsaba@creativestudio.fr",  // ADDED EMAIL
+    role: "mentor" as const,
     title: "Creative Director",
     company: "Freelance",
     field: "Arts & Creative Industries",
@@ -188,18 +197,20 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 8,
     bio: "Award-winning creative director with expertise in visual storytelling and brand identity. I've worked with major brands and love helping young creatives find their unique voice.",
     expertise: ["Visual Design", "Brand Identity", "Creative Strategy", "Art Direction"],
-    availability: "busy",
+    availability: "busy" as const,
     imageUrl: "/placeholder.svg",
     conversationStarters: [
       "How do I build a strong creative portfolio?",
       "What's the difference between art and design?",
       "How can I make a living as a creative professional?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
   {
     id: "10",
     name: "David Nkurunziza",
     email: "david.nkurunziza@unicef.org",  // ADDED EMAIL
+    role: "mentor" as const,
     title: "Program Director",
     company: "UNICEF",
     field: "Non-profit & Social Impact",
@@ -207,13 +218,14 @@ export const SAMPLE_MENTORS: Mentor[] = [
     experience: 12,
     bio: "Leading education and child protection programs across Africa. I'm passionate about social impact and helping young professionals understand how to make a difference in their communities.",
     expertise: ["Program Management", "Social Impact", "International Development", "Community Engagement"],
-    availability: "available",
+    availability: "available" as const,
     imageUrl: "/placeholder.svg",
     conversationStarters: [
       "How do I get started in non-profit work?",
       "What skills are needed for international development?",
       "How can I measure social impact effectively?",
     ],
+    createdAt: new Date("2024-01-01"),
   },
 ]
 

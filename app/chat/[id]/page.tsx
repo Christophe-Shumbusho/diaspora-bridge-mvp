@@ -1,6 +1,6 @@
 "use client"
 
-import { use, useEffect, useState, useMemo } from "react"
+import { use, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -8,10 +8,8 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, Send, Clock, User, MessageCircle } from "lucide-react"
 import Link from "next/link"
-import { formatTimeAgo, getTimeRemaining } from "@/lib/chat"
-import { getMessages, sendMessage, type ChatMessage } from "@/lib/messages-repo"
 import { useAuth } from "@/lib/auth-context"
-import { getAllConversations } from "@/lib/conversations-repo"
+import { db, type Conversation, type Message } from "@/lib/database"
 
 interface ConversationPageProps {
   params: Promise<{ id: string }>
@@ -22,31 +20,79 @@ export default function ConversationPage({ params }: ConversationPageProps) {
   const resolvedParams = use(params)
   const { user } = useAuth()
   const [newMessage, setNewMessage] = useState("")
-  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
+  const [conversation, setConversation] = useState<Conversation | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Use useMemo to prevent recreation on every render
-  const conversation = useMemo(() => {
-    return getAllConversations().find((conv) => conv.id === resolvedParams.id)
-  }, [resolvedParams.id])
-
-  // Now use conversation.id instead of conversation object
   useEffect(() => {
-    if (conversation?.id) {
-      setMessages(getMessages(conversation.id))
+    if (!user) {
+      router.push("/login")
+      return
     }
-  }, [conversation?.id]) // Only depend on the id, not the whole object
+
+    // Load conversation
+    const conv = db.getConversation(resolvedParams.id)
+    if (!conv) {
+      setIsLoading(false)
+      return
+    }
+
+    // Check if user has access to this conversation
+    if (conv.menteeId !== user.id && conv.mentorId !== user.id) {
+      router.push("/")
+      return
+    }
+
+    setConversation(conv)
+    setMessages(conv.messages)
+    setIsLoading(false)
+
+    // Set up polling for new messages (simulating real-time)
+    const interval = setInterval(() => {
+      const updatedConv = db.getConversation(resolvedParams.id)
+      if (updatedConv && updatedConv.messages.length !== messages.length) {
+        setMessages(updatedConv.messages)
+      }
+    }, 1000) // Check for new messages every second
+
+    return () => clearInterval(interval)
+  }, [resolvedParams.id, user, router, messages.length])
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !conversation || !user) return
-    const saved = sendMessage({
-      conversationId: conversation.id,
-      senderId: user.id,
-      senderName: user.name,
-      senderType: "mentee",
-      content: newMessage,
-    })
-    setMessages((prev) => [...prev, saved])
+    
+    const message = db.addMessage(conversation.id, user.id, newMessage)
+    if (message) {
+      const updatedConv = db.getConversation(conversation.id)
+      if (updatedConv) {
+        setMessages(updatedConv.messages)
+      }
+    }
     setNewMessage("")
+  }
+
+  const formatTimeAgo = (date: Date) => {
+    const now = new Date()
+    const diff = now.getTime() - date.getTime()
+    const minutes = Math.floor(diff / (1000 * 60))
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+
+    if (days > 0) return `${days}d ago`
+    if (hours > 0) return `${hours}h ago`
+    if (minutes > 0) return `${minutes}m ago`
+    return 'Just now'
+  }
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <MessageCircle className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p>Loading conversation...</p>
+        </div>
+      </div>
+    )
   }
 
   if (!conversation) {
@@ -63,6 +109,11 @@ export default function ConversationPage({ params }: ConversationPageProps) {
     )
   }
 
+  // Get the other participant's name
+  const otherParticipant = conversation.menteeId === user?.id 
+    ? db.getUserById(conversation.mentorId)
+    : db.getUserById(conversation.menteeId)
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
@@ -70,23 +121,16 @@ export default function ConversationPage({ params }: ConversationPageProps) {
         <div className="max-w-4xl mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Link href="/chat" className="text-muted-foreground hover:text-foreground">
+              <Link href={user?.role === "mentor" ? "/mentor/dashboard" : "/matches"} className="text-muted-foreground hover:text-foreground">
                 <ArrowLeft className="h-5 w-5" />
               </Link>
               <div>
-                <h1 className="text-lg font-semibold">{conversation.mentorName}</h1>
+                <h1 className="text-lg font-semibold">{otherParticipant?.name || "Unknown User"}</h1>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <div className={`w-2 h-2 rounded-full ${conversation.status === "active" ? "bg-green-500" : "bg-yellow-500"}`} />
                   <span className="capitalize">{conversation.status}</span>
-                  {conversation.expiresAt && (
-                    <>
-                      <span>•</span>
-                      <div className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {getTimeRemaining(conversation.expiresAt)}
-                      </div>
-                    </>
-                  )}
+                  <span>•</span>
+                  <span>Started {formatTimeAgo(conversation.createdAt)}</span>
                 </div>
               </div>
             </div>
@@ -98,32 +142,50 @@ export default function ConversationPage({ params }: ConversationPageProps) {
       {/* Messages */}
       <div className="flex-1 max-w-4xl mx-auto w-full px-4 py-6">
         <div className="space-y-4 mb-6">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex ${message.senderType === "mentee" ? "justify-end" : "justify-start"}`}
-            >
-              <div
-                className={`max-w-[70%] rounded-lg p-3 ${
-                  message.senderType === "mentee"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted"
-                }`}
-              >
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="flex items-center gap-1 text-xs opacity-80">
-                    {message.senderType === "mentor" && <User className="h-3 w-3" />}
-                    <span className="font-medium">{message.senderName}</span>
-                  </div>
-                  <span className="text-xs opacity-60">{formatTimeAgo(message.timestamp)}</span>
-                </div>
-                <p className="text-sm">{message.content}</p>
-                {!message.read && message.senderType === "mentor" && (
-                  <div className="text-xs opacity-60 mt-1">Delivered</div>
-                )}
-              </div>
+          {messages.length === 0 ? (
+            <div className="text-center py-8">
+              <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Start the conversation</h3>
+              <p className="text-muted-foreground">
+                {user?.role === "mentee" 
+                  ? "Introduce yourself and share what you'd like to learn!"
+                  : "Welcome your mentee and ask how you can help them grow!"
+                }
+              </p>
             </div>
-          ))}
+          ) : (
+            messages.map((message) => {
+              const isCurrentUser = message.senderId === user?.id
+              const sender = db.getUserById(message.senderId)
+              
+              return (
+                <div
+                  key={message.id}
+                  className={`flex ${isCurrentUser ? "justify-end" : "justify-start"}`}
+                >
+                  <div
+                    className={`max-w-[70%] rounded-lg p-3 ${
+                      isCurrentUser
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <div className="flex items-center gap-1 text-xs opacity-80">
+                        {!isCurrentUser && <User className="h-3 w-3" />}
+                        <span className="font-medium">{sender?.name || "Unknown"}</span>
+                      </div>
+                      <span className="text-xs opacity-60">{formatTimeAgo(message.timestamp)}</span>
+                    </div>
+                    <p className="text-sm">{message.content}</p>
+                    {!message.read && !isCurrentUser && (
+                      <div className="text-xs opacity-60 mt-1">Delivered</div>
+                    )}
+                  </div>
+                </div>
+              )
+            })
+          )}
         </div>
 
         {/* Message Input */}
