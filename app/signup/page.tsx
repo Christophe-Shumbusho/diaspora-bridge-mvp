@@ -12,6 +12,7 @@ import { ArrowLeft, ArrowRight, CheckCircle, Users, Briefcase, AlertCircle } fro
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { AuthService, type MenteeSignupData, type MentorSignupData } from "@/lib/auth-service"
+import { db } from "@/lib/database"
 
 const CAREER_FIELDS = [
   "Technology & Software",
@@ -84,7 +85,7 @@ export default function SignupPage() {
     title: "",
     company: "",
     field: "",
-    yearsOfExperience: 0,
+    yearsOfExperience: "0",
     bio: "",
     expertise: [] as string[],
     conversationStarters: [] as string[],
@@ -145,9 +146,18 @@ export default function SignupPage() {
 
         const result = await AuthService.signupMentee(menteeData)
         if (result.success && result.user) {
-          // Log in the user and redirect to matching page
-          await login({ email: formData.email, password: formData.password })
-          router.push("/matches")
+          // Auto-login the user immediately after signup
+          login(result.user)
+          
+          // Check if mentee has any approved requests to redirect to dashboard
+          const approvedRequests = db.getMentorshipRequestsForMentee(result.user.id)
+            .filter(req => req.status === "approved")
+          
+          if (approvedRequests.length > 0) {
+            router.push("/mentee/dashboard")
+          } else {
+            router.push("/matches")
+          }
         } else {
           setError(result.error || "Account creation failed")
         }

@@ -401,11 +401,11 @@ export function findMatchingMentors(mentee: MenteeProfile): MentorApplication[] 
     return { mentor, score }
   })
   
-  // Sort by score and return top matches
+  // Sort by score and return only highly relevant matches
   return scored
-    .filter(item => item.score > 0) // Only return mentors with some relevance
+    .filter(item => item.score >= 8) // Only show mentors with high relevance (8+ points)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 10) // Increased to show more matches
+    .slice(0, 6) // Show top 6 most relevant matches
     .map(item => item.mentor)
 }
 

@@ -11,6 +11,7 @@ import { ArrowLeft, LogIn, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { AuthService } from "@/lib/auth-service"
+import { db } from "@/lib/database"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -37,10 +38,18 @@ export default function LoginPage() {
       if (result.success && result.user) {
         login(result.user)
         
-        // Redirect based on user role
+        // Redirect based on user role and status
         switch (result.user.role) {
           case "mentee":
-            router.push("/matches")
+            // Check if mentee has approved requests to redirect to dashboard
+            const approvedRequests = db.getMentorshipRequestsForMentee(result.user.id)
+              .filter(req => req.status === "approved")
+            
+            if (approvedRequests.length > 0) {
+              router.push("/mentee/dashboard")
+            } else {
+              router.push("/matches")
+            }
             break
           case "mentor":
             router.push("/mentor/dashboard")

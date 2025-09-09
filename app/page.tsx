@@ -31,7 +31,7 @@ export default function HomePage() {
               className="text-lg px-10 py-4 shadow-glow hover:shadow-lg transition-all duration-300"
             >
               <Link href="/signup">
-                Find Your Mentor
+                Find Mentorship
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
