@@ -128,7 +128,7 @@ export function Navigation() {
                   </Link>
                 </Button>
                 <Button asChild>
-                  <Link href="/signup">Get Started</Link>
+                  <Link href="/mentors">Browser mentors</Link>
                 </Button>
               </div>
             )}
@@ -162,7 +162,7 @@ export function Navigation() {
                   {!isAuthenticated && (
                     <div className="space-y-2 mt-4">
                       <Button asChild className="w-full">
-                        <Link href="/signup" onClick={() => setIsOpen(false)}>
+                        <Link href="/mentors" onClick={() => setIsOpen(false)}>
                           Get Started
                         </Link>
                       </Button>
