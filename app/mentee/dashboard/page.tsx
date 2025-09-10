@@ -75,7 +75,7 @@ export default function MenteeDashboardPage() {
         {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Welcome back, {user?.name}!</h1>
-          <p className="text-muted-foreground">Continue your mentorship journey and build meaningful connections</p>
+          <p className="text-black/60">Continue your mentorship journey and build meaningful connections</p>
         </div>
 
         {/* Stats Cards */}
@@ -86,7 +86,7 @@ export default function MenteeDashboardPage() {
                 <MessageCircle className="h-5 w-5 text-blue-500" />
                 <div>
                   <p className="text-2xl font-bold">{conversations.length}</p>
-                  <p className="text-sm text-muted-foreground">Active Chats</p>
+                  <p className="text-sm text-black/60">Active Chats</p>
                 </div>
               </div>
             </CardContent>
@@ -98,7 +98,7 @@ export default function MenteeDashboardPage() {
                 <Clock className="h-5 w-5 text-yellow-500" />
                 <div>
                   <p className="text-2xl font-bold">{pendingRequests.length}</p>
-                  <p className="text-sm text-muted-foreground">Pending Requests</p>
+                  <p className="text-sm text-black/60">Pending Requests</p>
                 </div>
               </div>
             </CardContent>
@@ -110,7 +110,7 @@ export default function MenteeDashboardPage() {
                 <Users className="h-5 w-5 text-green-500" />
                 <div>
                   <p className="text-2xl font-bold">{approvedRequests.length}</p>
-                  <p className="text-sm text-muted-foreground">Approved Mentors</p>
+                  <p className="text-sm text-black/60">Approved Mentors</p>
                 </div>
               </div>
             </CardContent>
@@ -122,7 +122,7 @@ export default function MenteeDashboardPage() {
                 <Star className="h-5 w-5 text-purple-500" />
                 <div>
                   <p className="text-2xl font-bold">{mentorshipRequests.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Requests</p>
+                  <p className="text-sm text-black/60">Total Requests</p>
                 </div>
               </div>
             </CardContent>
@@ -158,13 +158,13 @@ export default function MenteeDashboardPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{mentor?.name || "Unknown Mentor"}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-black/60">
                           {lastMessage 
                             ? `${lastMessage.content.substring(0, 50)}${lastMessage.content.length > 50 ? '...' : ''}`
                             : "No messages yet"
                           }
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-black/60">
                           {lastMessage ? formatTimeAgo(lastMessage.timestamp) : formatTimeAgo(conversation.createdAt)}
                         </p>
                       </div>
@@ -183,9 +183,9 @@ export default function MenteeDashboardPage() {
                 })
               ) : (
                 <div className="text-center py-8">
-                  <MessageCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4">No active conversations yet</p>
-                  <p className="text-sm text-muted-foreground mb-4">
+                  <MessageCircle className="h-12 w-12 text-black/60 mx-auto mb-4" />
+                  <p className="text-black/60 mb-4">No active conversations yet</p>
+                  <p className="text-sm text-black/60 mb-4">
                     Once a mentor approves your request, you'll be able to start chatting here.
                   </p>
                   <Button asChild>
@@ -217,11 +217,11 @@ export default function MenteeDashboardPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-medium truncate">{mentor?.name || "Unknown Mentor"}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-black/60">
                           Sent {formatTimeAgo(request.createdAt)}
                         </p>
                         {request.message && (
-                          <p className="text-xs text-muted-foreground mt-1">
+                          <p className="text-xs text-black/60 mt-1">
                             "{request.message.substring(0, 60)}..."
                           </p>
                         )}
@@ -249,8 +249,8 @@ export default function MenteeDashboardPage() {
                 })
               ) : (
                 <div className="text-center py-8">
-                  <Send className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground mb-4">No mentorship requests yet</p>
+                  <Send className="h-12 w-12 text-black/60 mx-auto mb-4" />
+                  <p className="text-black/60 mb-4">No mentorship requests yet</p>
                   <Button asChild>
                     <Link href="/matches">Browse Mentors</Link>
                   </Button>

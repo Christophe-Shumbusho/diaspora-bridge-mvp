@@ -87,7 +87,7 @@ export function Navigation() {
               <Link
                 key={item.href}
                 href={item.href}
-                className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+                className="flex items-center gap-2 text-black/60 hover:text-foreground transition-colors"
               >
                 <item.icon className="h-4 w-4" />
                 {item.label}
@@ -109,7 +109,7 @@ export function Navigation() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2 text-sm">
                   <User className="h-4 w-4" />
-                  <span className="text-muted-foreground">{user.name}</span>
+                  <span className="text-black/60">{user.name}</span>
                   <Badge variant="outline" className="text-xs">
                     {user.role}
                   </Badge>

@@ -87,7 +87,7 @@ export default function AdminDashboardPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-black/60 mt-2">
             Manage mentor applications and platform oversight
           </p>
         </div>
@@ -97,11 +97,11 @@ export default function AdminDashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Pending Applications</CardTitle>
-              <Clock className="h-4 w-4 text-muted-foreground" />
+              <Clock className="h-4 w-4 text-black/60" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{pendingMentors.length}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-black/60">
                 Awaiting review
               </p>
             </CardContent>
@@ -110,11 +110,11 @@ export default function AdminDashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Active Mentors</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <Users className="h-4 w-4 text-black/60" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{approvedMentors.length}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-black/60">
                 Approved and active
               </p>
             </CardContent>
@@ -123,11 +123,11 @@ export default function AdminDashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Applications</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <TrendingUp className="h-4 w-4 text-black/60" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{pendingMentors.length + approvedMentors.length}</div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-black/60">
                 All time
               </p>
             </CardContent>
@@ -136,7 +136,7 @@ export default function AdminDashboardPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Approval Rate</CardTitle>
-              <CheckCircle className="h-4 w-4 text-muted-foreground" />
+              <CheckCircle className="h-4 w-4 text-black/60" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
@@ -144,7 +144,7 @@ export default function AdminDashboardPage() {
                   ? Math.round((approvedMentors.length / (pendingMentors.length + approvedMentors.length)) * 100)
                   : 0}%
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-black/60">
                 Success rate
               </p>
             </CardContent>
@@ -166,7 +166,7 @@ export default function AdminDashboardPage() {
               </CardHeader>
               <CardContent>
                 {pendingMentors.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
+                  <div className="text-center py-8 text-black/60">
                     <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>No pending applications</p>
                   </div>
@@ -181,10 +181,10 @@ export default function AdminDashboardPage() {
                                 <h3 className="font-semibold">{mentor.name}</h3>
                                 <Badge variant="outline">{mentor.field}</Badge>
                               </div>
-                              <p className="text-sm text-muted-foreground mb-2">
+                              <p className="text-sm text-black/60 mb-2">
                                 {mentor.title} at {mentor.company}
                               </p>
-                              <p className="text-sm text-muted-foreground mb-2">
+                              <p className="text-sm text-black/60 mb-2">
                                 📍 {mentor.location} • {mentor.yearsOfExperience} years experience
                               </p>
                               <p className="text-sm line-clamp-2">{mentor.bio}</p>
@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
                   <div className="space-y-4">
                     <div>
                       <h3 className="font-semibold text-lg">{selectedMentor.name}</h3>
-                      <p className="text-sm text-muted-foreground">{selectedMentor.email}</p>
+                      <p className="text-sm text-black/60">{selectedMentor.email}</p>
                     </div>
 
                     <div>
@@ -307,7 +307,7 @@ export default function AdminDashboardPage() {
                     </div>
                   </div>
                 ) : (
-                  <div className="text-center py-8 text-muted-foreground">
+                  <div className="text-center py-8 text-black/60">
                     <AlertCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
                     <p>Select an application to review details and take action</p>
                   </div>
@@ -330,7 +330,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             {approvedMentors.length === 0 ? (
-              <div className="text-center py-8 text-muted-foreground">
+              <div className="text-center py-8 text-black/60">
                 <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
                 <p>No active mentors yet</p>
               </div>
@@ -345,10 +345,10 @@ export default function AdminDashboardPage() {
                           Active
                         </Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground mb-1">
+                      <p className="text-sm text-black/60 mb-1">
                         {mentor.title} at {mentor.company}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-black/60">
                         📍 {mentor.location} • {mentor.field}
                       </p>
                     </CardContent>

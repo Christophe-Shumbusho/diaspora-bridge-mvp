@@ -508,7 +508,7 @@ const mentor3: MentorApplication = {
   yearsOfExperience: 12,
   bio: "Medical doctor with expertise in public health and healthcare administration. Passionate about improving healthcare access and quality in Rwanda.",
   expertise: ["Medical Practice", "Public Health", "Healthcare Administration", "Research", "Policy Development"],
-  availability: "busy",
+  availability: "available",
   conversationStarters: ["What interests you about healthcare?", "Are you considering medical school?"],
   whyMentor: "I want to inspire the next generation of healthcare professionals",
   achievements: ["Published 10+ research papers", "Led COVID-19 response team"]

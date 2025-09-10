@@ -151,14 +151,14 @@ export default function MentorDashboardPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+          <Link href="/" className="inline-flex items-center text-black/60 hover:text-foreground mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">Mentor Dashboard</h1>
-              <p className="text-muted-foreground">Welcome back, {user.name}! Manage your mentorship requests and conversations.</p>
+              <p className="text-black/60">Welcome back, {user.name}! Manage your mentorship requests and conversations.</p>
             </div>
             <Badge variant="outline" className="text-sm">
               Mentor Portal
@@ -174,7 +174,7 @@ export default function MentorDashboardPage() {
                 <Mail className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-2xl font-bold">{mentorshipRequests.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Requests</p>
+                  <p className="text-sm text-black/60">Total Requests</p>
                 </div>
               </div>
             </CardContent>
@@ -185,7 +185,7 @@ export default function MentorDashboardPage() {
                 <div className="w-2 h-2 bg-yellow-500 rounded-full" />
                 <div>
                   <p className="text-2xl font-bold">{mentorshipRequests.filter(r => r.status === "pending").length}</p>
-                  <p className="text-sm text-muted-foreground">Pending</p>
+                  <p className="text-sm text-black/60">Pending</p>
                 </div>
               </div>
             </CardContent>
@@ -196,7 +196,7 @@ export default function MentorDashboardPage() {
                 <div className="w-2 h-2 bg-green-500 rounded-full" />
                 <div>
                   <p className="text-2xl font-bold">{mentorshipRequests.filter(r => r.status === "approved").length}</p>
-                  <p className="text-sm text-muted-foreground">Approved</p>
+                  <p className="text-sm text-black/60">Approved</p>
                 </div>
               </div>
             </CardContent>
@@ -207,7 +207,7 @@ export default function MentorDashboardPage() {
                 <MessageCircle className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-2xl font-bold">{conversations.length}</p>
-                  <p className="text-sm text-muted-foreground">Active Chats</p>
+                  <p className="text-sm text-black/60">Active Chats</p>
                 </div>
               </div>
             </CardContent>
@@ -220,7 +220,7 @@ export default function MentorDashboardPage() {
             <div className="flex gap-4">
               <div className="flex-1">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-black/60" />
                   <Input
                     placeholder="Search mentees..."
                     value={searchTerm}
@@ -279,7 +279,7 @@ export default function MentorDashboardPage() {
                       </div>
                       <div className="flex-1">
                         <h3 className="text-lg font-semibold">{mentee.name}</h3>
-                        <p className="text-sm text-muted-foreground mb-2">
+                        <p className="text-sm text-black/60 mb-2">
                           {mentee.email} • Requested {formatTimeAgo(request.createdAt)}
                         </p>
                         {request.message && (
@@ -288,7 +288,7 @@ export default function MentorDashboardPage() {
                           </div>
                         )}
                         {(mentee as any).profile && (
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-xs text-black/60">
                             <span className="font-medium">Career Goal:</span> {(mentee as any).profile.careerGoal} • 
                             <span className="font-medium ml-2">Experience:</span> {(mentee as any).profile.experienceLevel}
                           </div>
@@ -353,7 +353,7 @@ export default function MentorDashboardPage() {
                           </div>
                           <div>
                             <h4 className="font-medium">{mentee.name}</h4>
-                            <p className="text-sm text-muted-foreground">
+                            <p className="text-sm text-black/60">
                               Started {formatTimeAgo(conversation.createdAt)}
                             </p>
                           </div>
@@ -376,9 +376,9 @@ export default function MentorDashboardPage() {
         {filteredRequests.length === 0 && (
           <Card>
             <CardContent className="text-center py-16">
-              <Heart className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <Heart className="h-12 w-12 text-black/60 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No mentorship requests found</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-black/60 mb-4">
                 {searchTerm || statusFilter !== "all" 
                   ? "Try adjusting your search or filter criteria."
                   : "You don't have any mentorship requests yet. Mentees will find you through our matching system!"

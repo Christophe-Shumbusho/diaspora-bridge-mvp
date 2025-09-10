@@ -37,12 +37,12 @@ export default function MentorsPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+          <Link href="/" className="inline-flex items-center text-black/60 hover:text-foreground mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
           <h1 className="text-3xl font-bold text-foreground mb-2">Browse Mentors</h1>
-          <p className="text-muted-foreground">Connect with successful Rwandan professionals from around the world</p>
+          <p className="text-black/60">Connect with successful Rwandan professionals from around the world</p>
         </div>
 
 
@@ -50,7 +50,7 @@ export default function MentorsPage() {
         {mentors.length === 0 ? (
           <div className="text-center py-12">
             <h2 className="text-xl font-semibold mb-2">No Mentors Available Yet</h2>
-            <p className="text-muted-foreground mb-4">
+            <p className="text-black/60 mb-4">
               We're currently reviewing mentor applications. Check back soon!
             </p>
             <Button asChild>
@@ -71,13 +71,13 @@ export default function MentorsPage() {
                   <div className="flex-1 min-w-0">
                     <CardTitle className="text-lg leading-tight">{mentor.name}</CardTitle>
                     <CardDescription className="text-sm">{mentor.title}</CardDescription>
-                    <p className="text-sm text-muted-foreground mt-1">{mentor.company}</p>
+                    <p className="text-sm text-black/60 mt-1">{mentor.company}</p>
                   </div>
                 </div>
               </CardHeader>
 
               <CardContent className="space-y-4">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <div className="flex items-center gap-4 text-sm text-black/60">
                   <div className="flex items-center gap-1">
                     <MapPin className="h-4 w-4" />
                     {mentor.location}
@@ -96,11 +96,11 @@ export default function MentorsPage() {
                         mentor.availability === "available" ? "bg-green-500" : "bg-yellow-500"
                       }`}
                     />
-                    <span className="text-xs text-muted-foreground capitalize">{mentor.availability}</span>
+                    <span className="text-xs text-black/60 capitalize">{mentor.availability}</span>
                   </div>
                 </div>
 
-                <p className="text-sm text-muted-foreground line-clamp-3">{mentor.bio}</p>
+                <p className="text-sm text-black/60 line-clamp-3">{mentor.bio}</p>
 
                 <div className="flex flex-wrap gap-1">
                   {mentor.expertise.slice(0, 3).map((skill: string) => (

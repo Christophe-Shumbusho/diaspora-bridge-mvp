@@ -360,25 +360,12 @@ export default function RequestMentorshipPage({ params }: RequestMentorshipPageP
                     />
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="whyThisMentor">Why do you want {mentor.name} as your mentor? *</Label>
-                  <Textarea
-                    id="whyThisMentor"
-                    name="whyThisMentor"
-                    placeholder={`Tell ${mentor.name} why you'd like them as your mentor and what you hope to achieve...`}
-                    value={formData.whyThisMentor}
-                    onChange={(e) => updateFormData("whyThisMentor", e.target.value)}
-                    rows={4}
-                    required
-                  />
-                </div>
-
+                
                 <div className="flex justify-end">
                   <Button 
                     type="button" 
                     onClick={nextStep}
-                    disabled={!formData.name || !formData.email || !formData.password || !formData.confirmPassword || !formData.location || !formData.currentEducation || !formData.whyThisMentor}
+                    disabled={!formData.name || !formData.email || !formData.password || !formData.confirmPassword || !formData.location || !formData.currentEducation}
                   >
                     Next Step
                     <ArrowRight className="ml-2 h-4 w-4" />

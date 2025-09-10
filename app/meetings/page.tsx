@@ -28,7 +28,7 @@ export default function MeetingsPage() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold mb-2">Please log in</h2>
-          <p className="text-muted-foreground mb-4">You need to be logged in to view meetings.</p>
+          <p className="text-black/60 mb-4">You need to be logged in to view meetings.</p>
           <Button asChild>
             <Link href="/signup">Get Started</Link>
           </Button>
@@ -81,14 +81,14 @@ export default function MeetingsPage() {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <Link href="/" className="inline-flex items-center text-muted-foreground hover:text-foreground mb-4">
+          <Link href="/" className="inline-flex items-center text-black/60 hover:text-foreground mb-4">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back to Home
           </Link>
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">Meetings & Sessions</h1>
-              <p className="text-muted-foreground">Manage your one-on-one mentoring sessions</p>
+              <p className="text-black/60">Manage your one-on-one mentoring sessions</p>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant="outline" className="text-sm">
@@ -110,7 +110,7 @@ export default function MeetingsPage() {
                 <Calendar className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-2xl font-bold">{userMeetings.length}</p>
-                  <p className="text-sm text-muted-foreground">Total Meetings</p>
+                  <p className="text-sm text-black/60">Total Meetings</p>
                 </div>
               </div>
             </CardContent>
@@ -121,7 +121,7 @@ export default function MeetingsPage() {
                 <div className="w-2 h-2 bg-blue-500 rounded-full" />
                 <div>
                   <p className="text-2xl font-bold">{upcomingMeetings.length}</p>
-                  <p className="text-sm text-muted-foreground">Upcoming</p>
+                  <p className="text-sm text-black/60">Upcoming</p>
                 </div>
               </div>
             </CardContent>
@@ -132,7 +132,7 @@ export default function MeetingsPage() {
                 <div className="w-2 h-2 bg-green-500 rounded-full" />
                 <div>
                   <p className="text-2xl font-bold">{userMeetings.filter(m => m.status === "completed").length}</p>
-                  <p className="text-sm text-muted-foreground">Completed</p>
+                  <p className="text-sm text-black/60">Completed</p>
                 </div>
               </div>
             </CardContent>
@@ -143,7 +143,7 @@ export default function MeetingsPage() {
                 <Video className="h-5 w-5 text-primary" />
                 <div>
                   <p className="text-2xl font-bold">{userMeetings.filter(m => m.type === "video").length}</p>
-                  <p className="text-sm text-muted-foreground">Video Calls</p>
+                  <p className="text-sm text-black/60">Video Calls</p>
                 </div>
               </div>
             </CardContent>
@@ -170,10 +170,10 @@ export default function MeetingsPage() {
                       </div>
                       <div>
                         <h3 className="font-semibold">{meeting.title}</h3>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="text-sm text-black/60">
                           with {user.role === "mentor" ? meeting.menteeName : meeting.mentorName}
                         </p>
-                        <p className="text-xs text-muted-foreground">
+                        <p className="text-xs text-black/60">
                           {formatMeetingTime(meeting.scheduledAt)}
                         </p>
                       </div>
@@ -247,14 +247,14 @@ export default function MeetingsPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold">{meeting.title}</h3>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-black/60">
                         with {user.role === "mentor" ? meeting.menteeName : meeting.mentorName}
                       </p>
-                      <p className="text-xs text-muted-foreground">
+                      <p className="text-xs text-black/60">
                         {formatMeetingTime(meeting.scheduledAt)} • {meeting.duration} minutes
                       </p>
                       {meeting.description && (
-                        <p className="text-xs text-muted-foreground mt-1">{meeting.description}</p>
+                        <p className="text-xs text-black/60 mt-1">{meeting.description}</p>
                       )}
                     </div>
                   </div>
@@ -278,9 +278,9 @@ export default function MeetingsPage() {
         {filteredMeetings.length === 0 && (
           <Card>
             <CardContent className="text-center py-16">
-              <Calendar className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <Calendar className="h-12 w-12 text-black/60 mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No meetings found</h3>
-              <p className="text-muted-foreground mb-4">
+              <p className="text-black/60 mb-4">
                 {searchTerm || statusFilter !== "all" 
                   ? "Try adjusting your search or filter criteria."
                   : "You don't have any meetings scheduled yet."

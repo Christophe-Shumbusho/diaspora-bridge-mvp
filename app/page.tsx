@@ -12,15 +12,11 @@ export default function HomePage() {
       <section className="px-4 py-20 md:py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-secondary/5 via-transparent to-accent/5" />
         <div className="max-w-5xl mx-auto text-center relative">
-          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
-            <Sparkles className="w-4 h-4 mr-2" />
-            Trusted by 500+ young professionals
-          </Badge>
           <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-8 text-balance leading-tight">
             Connect with Rwandan
             <span className="gradient-primary bg-clip-text text-transparent block">Diaspora Mentors</span>
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto text-pretty leading-relaxed">
+          <p className="text-xl md:text-2xl text-black/60 mb-12 max-w-3xl mx-auto text-pretty leading-relaxed">
             Bridge the gap between ambition and opportunity. Get personalized career guidance from successful Rwandan
             professionals around the world.
           </p>
@@ -44,7 +40,7 @@ export default function HomePage() {
               <Link href="/apply-mentor">Apply to be a Mentor</Link>
             </Button>
           </div>
-          <div className="flex flex-wrap justify-center gap-8 mt-16 text-sm text-muted-foreground">
+          <div className="flex flex-wrap justify-center gap-8 mt-16 text-sm text-black/60">
             <div className="flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-accent" />
               <span>95% success rate</span>
@@ -69,7 +65,7 @@ export default function HomePage() {
               How it works
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-balance">Simple. Effective. Transformative.</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
+            <p className="text-xl text-black/60 max-w-2xl mx-auto text-pretty">
               Three simple steps to unlock your potential with world-class mentorship
             </p>
           </div>
@@ -122,7 +118,7 @@ export default function HomePage() {
               Success stories
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-balance">Real Impact, Real Results</h2>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto text-pretty">
+            <p className="text-xl text-black/60 max-w-2xl mx-auto text-pretty">
               See how our platform has transformed careers and opened doors for ambitious young professionals
             </p>
           </div>
@@ -145,7 +141,7 @@ export default function HomePage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
+                <p className="text-black/60 mb-6 text-lg leading-relaxed">
                   "Through Diaspora Bridge, I connected with Dr. Aline who helped me land my first internship at a tech
                   company. Her guidance on technical interviews was invaluable."
                 </p>
@@ -156,7 +152,7 @@ export default function HomePage() {
                         <Star key={star} className="h-5 w-5 text-yellow-500 fill-current" />
                       ))}
                     </div>
-                    <span className="text-sm font-medium text-muted-foreground">5.0 rating</span>
+                    <span className="text-sm font-medium text-black/60">5.0 rating</span>
                   </div>
                   <Badge variant="outline" className="text-xs">
                     Verified
@@ -183,7 +179,7 @@ export default function HomePage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground mb-6 text-lg leading-relaxed">
+                <p className="text-black/60 mb-6 text-lg leading-relaxed">
                   "Patrick's mentorship helped me validate my startup idea and connect with investors. I'm now running
                   my own fintech company serving East African markets."
                 </p>
@@ -194,7 +190,7 @@ export default function HomePage() {
                         <Star key={star} className="h-5 w-5 text-yellow-500 fill-current" />
                       ))}
                     </div>
-                    <span className="text-sm font-medium text-muted-foreground">5.0 rating</span>
+                    <span className="text-sm font-medium text-black/60">5.0 rating</span>
                   </div>
                   <Badge variant="outline" className="text-xs">
                     Verified
@@ -216,7 +212,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Verified Mentors</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-black/60">
                     All mentors are verified professionals with proven track records in their fields.
                   </p>
                 </div>
@@ -225,7 +221,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Browsing mentors</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-black/60">
                     Here you can browse mentors based on your goals, field, and background.
                   </p>
                 </div>
@@ -237,7 +233,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Global Network</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-black/60">
                     Connect with Rwandan professionals across North America, Europe, and beyond.
                   </p>
                 </div>
@@ -247,7 +243,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Free Platform</h3>
-                  <p className="text-muted-foreground">
+                  <p className="text-black/60">
                     Access to mentorship opportunities at no cost - our mission is to empower Rwandan youth.
                   </p>
                 </div>
@@ -267,7 +263,7 @@ export default function HomePage() {
           <h2 className="text-4xl md:text-6xl font-bold mb-8 text-balance leading-tight">
             Ready to Start Your Journey?
           </h2>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12 text-pretty max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl md:text-2xl text-black/60 mb-12 text-pretty max-w-3xl mx-auto leading-relaxed">
             Join hundreds of young Rwandans who have found guidance and opportunities through our platform.
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-12">
@@ -282,7 +278,7 @@ export default function HomePage() {
               </Link>
             </Button>
           </div>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-black/60">
             ✨ Free forever • No credit card required • Get matched in 24 hours
           </p>
         </div>
