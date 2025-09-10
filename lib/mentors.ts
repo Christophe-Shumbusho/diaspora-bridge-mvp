@@ -1,3 +1,5 @@
+import { db, type MentorApplication } from './database'
+
 export interface Mentor {
   id: string
   name: string
@@ -257,35 +259,80 @@ export function getAllAvailableMentors(): Mentor[] {
   return SAMPLE_MENTORS.filter((mentor) => mentor.availability !== "unavailable")
 }
 
-import { db, type MentorApplication } from './database'
-
 export function getApprovedMentors(): Mentor[] {
-  // Get mentors from database who have been approved by admin
-  const approvedMentors = db.getApprovedMentors()
-  console.log("getApprovedMentors - Raw from DB:", approvedMentors)
+  console.log("getApprovedMentors - Function called")
   
-  const mappedMentors = approvedMentors.map((mentor: MentorApplication) => ({
-    id: mentor.id,
-    name: mentor.name,
-    email: mentor.email,
-    role: mentor.role,
-    title: mentor.title,
-    company: mentor.company,
-    field: mentor.field,
-    location: mentor.location,
-    experience: mentor.yearsOfExperience,
-    bio: mentor.bio,
-    expertise: mentor.expertise,
-    availability: mentor.availability,
-    imageUrl: mentor.imageUrl || "/placeholder.svg",
-    conversationStarters: mentor.conversationStarters || [],
-    createdAt: mentor.createdAt
-  }))
+  let approvedMentors: MentorApplication[] = []
   
-  console.log("getApprovedMentors - Mapped mentors:", mappedMentors)
+  try {
+    // Get approved mentors from database
+    console.log("getApprovedMentors - About to call db.getApprovedMentors()")
+    approvedMentors = db.getApprovedMentors()
+    console.log("getApprovedMentors - Database approved mentors:", approvedMentors.map((m: MentorApplication) => ({ id: m.id, name: m.name, status: m.status })))
+  } catch (error) {
+    console.error("getApprovedMentors - Error calling db.getApprovedMentors():", error)
+    // Return only sample mentors if database fails
+    return SAMPLE_MENTORS.filter((m: Mentor) => m.availability !== "unavailable")
+  }
   
-  const filteredMentors = mappedMentors.filter((mentor) => mentor.availability !== "unavailable")
-  console.log("getApprovedMentors - Filtered mentors:", filteredMentors)
+  // Map database mentors to Mentor interface format
+  const mappedMentors = approvedMentors.map((mentor: MentorApplication) => {
+    console.log("getApprovedMentors - Mapping mentor:", mentor.id, mentor.name)
+    console.log("getApprovedMentors - Mentor fields:", {
+      title: mentor.title,
+      company: mentor.company,
+      field: mentor.field,
+      location: mentor.location,
+      yearsOfExperience: mentor.yearsOfExperience,
+      bio: mentor.bio,
+      expertise: mentor.expertise,
+      availability: mentor.availability
+    })
+    
+    const mapped = {
+      id: mentor.id,
+      name: mentor.name,
+      email: mentor.email,
+      role: mentor.role,
+      title: mentor.title || "Software Developer", // Default value
+      company: mentor.company || "Tech Company", // Default value
+      field: mentor.field || "Technology", // Default value
+      location: mentor.location || "Remote", // Default value
+      experience: mentor.yearsOfExperience || 3, // Default value
+      bio: mentor.bio || "Experienced professional ready to mentor.", // Default value
+      expertise: mentor.expertise || ["General"], // Default value
+      availability: mentor.availability || "available", // Default value
+      imageUrl: mentor.imageUrl || "/placeholder.svg",
+      conversationStarters: mentor.conversationStarters || [
+        "What are your career goals?",
+        "What challenges are you facing in your field?",
+        "How can I help you grow professionally?"
+      ],
+      createdAt: mentor.createdAt
+    }
+    
+    console.log("getApprovedMentors - Mapped mentor:", mapped.id, mapped.name)
+    return mapped
+  })
   
-  return filteredMentors
+  console.log("getApprovedMentors - Mapped database mentors:", mappedMentors.map(m => ({ id: m.id, name: m.name })))
+  
+  // Start with sample mentors (filtered for availability)
+  const filteredSampleMentors = SAMPLE_MENTORS.filter(m => m.availability !== "unavailable")
+  console.log("getApprovedMentors - Sample mentors:", filteredSampleMentors.map(m => ({ id: m.id, name: m.name })))
+  
+  // Combine with database mentors, avoiding duplicates
+  const allMentors = [...filteredSampleMentors]
+  mappedMentors.forEach((dbMentor: Mentor) => {
+    if (!allMentors.find((m: Mentor) => m.id === dbMentor.id)) {
+      allMentors.push(dbMentor)
+      console.log("getApprovedMentors - Added database mentor:", dbMentor.id, dbMentor.name)
+    } else {
+      console.log("getApprovedMentors - Skipped duplicate mentor:", dbMentor.id, dbMentor.name)
+    }
+  })
+  
+  console.log("getApprovedMentors - Final combined mentors:", allMentors.map((m: Mentor) => ({ id: m.id, name: m.name })))
+  
+  return allMentors
 }

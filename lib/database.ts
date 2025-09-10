@@ -93,9 +93,21 @@ class Database {
   constructor() {
     // Only load from storage and initialize on client side
     if (typeof window !== 'undefined') {
+      console.log("Loading from localStorage...")
       this.loadFromStorage()
+      console.log("After loadFromStorage - users count:", this.users.size)
     }
     this.initializeSampleData()
+    
+    // Debug: Log all users after initialization
+    console.log("Database initialized with users:", Array.from(this.users.keys()))
+    console.log("All mentors:", this.getAllMentors().map(m => ({ id: m.id, name: m.name, status: m.status })))
+    
+    // Check localStorage directly
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('diaspora-bridge-users')
+      console.log("Raw localStorage data:", stored)
+    }
   }
 
   private loadFromStorage() {
@@ -106,13 +118,32 @@ class Database {
         const conversationsData = localStorage.getItem('diaspora-bridge-conversations')
 
         if (usersData) {
+          console.log("Found usersData in localStorage")
           const users = JSON.parse(usersData)
+          console.log("Parsed users from localStorage:", users.length, "users")
+          console.log("Raw users data:", users)
+          
+          // Check for Chris dev specifically
+          const chrisDev = users.find((u: any) => u.name.toLowerCase().includes('chris'))
+          if (chrisDev) {
+            console.log("FOUND CHRIS DEV in localStorage data:", chrisDev)
+          } else {
+            console.log("Chris dev NOT FOUND in localStorage data")
+          }
+          
           users.forEach((user: any) => {
             // Convert date strings back to Date objects
             user.createdAt = new Date(user.createdAt)
             user.updatedAt = new Date(user.updatedAt)
             this.users.set(user.id, user)
+            console.log("Loaded user:", user.id, user.name, user.role)
+            
+            if (user.name.toLowerCase().includes('chris')) {
+              console.log("LOADED CHRIS DEV into database:", user.id, user.name, user.status)
+            }
           })
+        } else {
+          console.log("No usersData found in localStorage")
         }
 
         if (requestsData) {
@@ -158,8 +189,9 @@ class Database {
   }
 
   private initializeSampleData() {
-    // Only initialize if no data exists (to avoid overwriting localStorage data)
-    if (this.users.size === 0) {
+    // Always initialize admin if not present, but preserve existing mentor data
+    const adminExists = this.users.has("admin-1")
+    if (!adminExists) {
       // Initialize with admin user
       const adminUser: User = {
         id: "admin-1",
@@ -194,11 +226,23 @@ class Database {
       ...user
     }
     
+    console.log("Database createUser - adding user:", newUser.id, newUser.name, newUser.role)
     this.users.set(newUser.id, newUser)
+    console.log("Database createUser - users count after add:", this.users.size)
+    
     // Only save to storage if we're on the client side
     if (typeof window !== 'undefined') {
+      console.log("Database createUser - saving to localStorage")
       this.saveToStorage()
+      
+      // Verify save
+      const stored = localStorage.getItem('diaspora-bridge-users')
+      if (stored) {
+        const users = JSON.parse(stored)
+        console.log("Database createUser - verification: users in localStorage:", users.length)
+      }
     }
+    
     return newUser
   }
 
@@ -212,7 +256,9 @@ class Database {
   }
 
   getUserById(id: string): User | null {
-    return this.users.get(id) || null
+    const user = this.users.get(id) || null
+    console.log(`Database getUserById(${id}):`, user)
+    return user
   }
 
   updateUser(id: string, updates: Partial<User>): User | null {
@@ -235,11 +281,11 @@ class Database {
 
   getApprovedMentors(): MentorApplication[] {
     const allMentors = this.getAllMentors()
-    console.log("Database - All mentors:", allMentors)
+    console.log("Database - All mentors:", allMentors.map(m => ({ id: m.id, name: m.name, status: m.status })))
     console.log("Database - All mentors count:", allMentors.length)
     
     const approved = allMentors.filter(mentor => mentor.status === "active")
-    console.log("Database - Approved mentors:", approved)
+    console.log("Database - Approved mentors:", approved.map(m => ({ id: m.id, name: m.name, status: m.status })))
     console.log("Database - Approved count:", approved.length)
     
     return approved
@@ -251,15 +297,45 @@ class Database {
 
   approveMentor(mentorId: string): void {
     const mentor = this.users.get(mentorId) as MentorApplication
+    console.log("Approving mentor:", mentorId, mentor)
     if (mentor && mentor.role === "mentor") {
       mentor.status = "active"
       mentor.updatedAt = new Date()
       this.users.set(mentorId, mentor)
+      console.log("Mentor status updated to active:", mentor.name)
+      
+      // Store approved mentor data in a separate storage key for persistence
+      this.storeApprovedMentor(mentor)
+      
       // Only save to storage if we're on the client side
       if (typeof window !== 'undefined') {
+        console.log("Saving approved mentor to localStorage")
         this.saveToStorage()
+        
+        // Verify save
+        const stored = localStorage.getItem('diaspora-bridge-users')
+        if (stored) {
+          const users = JSON.parse(stored)
+          const approvedMentor = users.find((u: any) => u.id === mentorId)
+          console.log("Verification - approved mentor in localStorage:", approvedMentor)
+        }
       }
+    } else {
+      console.log("Mentor not found or invalid role:", mentorId)
     }
+  }
+
+  private storeApprovedMentor(mentor: MentorApplication): void {
+    // No longer needed - we'll use database directly
+    console.log(`Mentor ${mentor.name} approved and stored in database`)
+  }
+
+  getStoredApprovedMentors(): any[] {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('approvedMentors')
+      return stored ? JSON.parse(stored) : []
+    }
+    return []
   }
 
   rejectMentor(mentorId: string): void {

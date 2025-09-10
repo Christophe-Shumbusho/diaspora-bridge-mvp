@@ -108,13 +108,14 @@ export default function MentorChatPage({ params }: MentorChatPageProps) {
     })
 
     // Add a message about the scheduled meeting
-    const meetingMessage: Message = {
+    const meetingMessage: ChatMessage = {
       id: `msg-meeting-${Date.now()}`,
+      conversationId: conversation.id,
       senderId: conversation.mentorId,
       senderName: conversation.mentorName,
       senderType: "mentor",
       content: `📅 I've scheduled a ${meetingForm.type} meeting: "${meetingForm.title}" for ${new Date(meetingForm.scheduledAt).toLocaleDateString()}. ${meetingLink ? `Join here: ${meetingLink}` : ""}`,
-      timestamp: new Date(),
+      timestamp: new Date().toISOString(),
       read: false,
     }
     setMessages(prev => [...prev, meetingMessage])

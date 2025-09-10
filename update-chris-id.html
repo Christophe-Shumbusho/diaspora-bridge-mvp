@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Chris Dev ID</title>
+</head>
+<body>
+    <h1>Update Chris Dev ID to mentor-4</h1>
+    <button onclick="updateChrisId()">Update Chris Dev ID</button>
+    <div id="result"></div>
+
+    <script>
+        function updateChrisId() {
+            const stored = localStorage.getItem('diaspora-bridge-users');
+            if (!stored) {
+                document.getElementById('result').innerHTML = 'No users found in localStorage';
+                return;
+            }
+
+            const users = JSON.parse(stored);
+            let chrisFound = false;
+            let oldId = '';
+
+            // Find Chris dev and update his ID
+            const updatedUsers = users.map(user => {
+                if (user.name && user.name.toLowerCase().includes('chris') && user.role === 'mentor') {
+                    chrisFound = true;
+                    oldId = user.id;
+                    return { ...user, id: 'mentor-4' };
+                }
+                return user;
+            });
+
+            if (chrisFound) {
+                // Save updated users
+                localStorage.setItem('diaspora-bridge-users', JSON.stringify(updatedUsers));
+                
+                // Also update any conversations that reference the old ID
+                const conversations = localStorage.getItem('diaspora-bridge-conversations');
+                if (conversations) {
+                    const parsedConversations = JSON.parse(conversations);
+                    const updatedConversations = parsedConversations.map(conv => {
+                        if (conv.mentorId === oldId) {
+                            return { ...conv, mentorId: 'mentor-4' };
+                        }
+                        return conv;
+                    });
+                    localStorage.setItem('diaspora-bridge-conversations', JSON.stringify(updatedConversations));
+                }
+
+                // Update any requests that reference the old ID
+                const requests = localStorage.getItem('diaspora-bridge-requests');
+                if (requests) {
+                    const parsedRequests = JSON.parse(requests);
+                    const updatedRequests = parsedRequests.map(req => {
+                        if (req.mentorId === oldId) {
+                            return { ...req, mentorId: 'mentor-4' };
+                        }
+                        return req;
+                    });
+                    localStorage.setItem('diaspora-bridge-requests', JSON.stringify(updatedRequests));
+                }
+
+                document.getElementById('result').innerHTML = `
+                    <p style="color: green;">✅ Successfully updated Chris dev ID from ${oldId} to mentor-4</p>
+                    <p>Updated localStorage data:</p>
+                    <ul>
+                        <li>Users</li>
+                        <li>Conversations (if any)</li>
+                        <li>Requests (if any)</li>
+                    </ul>
+                    <p>You can now close this page and refresh your application.</p>
+                `;
+            } else {
+                document.getElementById('result').innerHTML = '<p style="color: red;">❌ Chris dev not found in localStorage</p>';
+            }
+        }
+    </script>
+</body>
+</html>

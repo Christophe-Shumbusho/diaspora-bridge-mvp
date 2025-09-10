@@ -27,6 +27,8 @@ export default function ApplyMentorPage() {
   const [form, setForm] = useState({
     name: "",
     email: "",
+    password: "",
+    confirmPassword: "",
     title: "",
     company: "",
     field: "",
@@ -39,10 +41,10 @@ export default function ApplyMentorPage() {
 
   const submit = () => {
     const app: MentorApplication = {
-      id: `app-${Date.now()}`,
+      id: `mentor-${Date.now()}`,
       name: form.name,
       email: form.email,
-      password: "temp123", // Temporary password, will be set during approval
+      password: form.password,
       role: "mentor" as const,
       status: "pending" as const,
       createdAt: new Date(),
@@ -56,13 +58,24 @@ export default function ApplyMentorPage() {
       expertise: form.expertise.split(",").map(s => s.trim()).filter(Boolean),
       availability: "available" as const,
       imageUrl: "",
-      conversationStarters: [],
+      conversationStarters: [
+        "What are your career goals?",
+        "What challenges are you facing in your field?",
+        "How can I help you grow professionally?"
+      ],
       linkedinUrl: "",
       websiteUrl: "",
       whyMentor: "",
       achievements: []
     }
-    db.createUser(app)
+    console.log("Creating mentor application:", app)
+    const createdUser = db.createUser(app)
+    console.log("Created user result:", createdUser)
+    
+    // Verify it was saved
+    const savedUser = db.getUserById(app.id)
+    console.log("Verification - saved user:", savedUser)
+    
     setSubmitted(true)
   }
 
@@ -95,12 +108,20 @@ export default function ApplyMentorPage() {
           <CardContent className="space-y-4">
             <div className="grid md:grid-cols-2 gap-4">
               <div>
-                <Label>Name</Label>
-                <Input value={form.name} onChange={(e) => update("name", e.target.value)} />
+                <Label>Name *</Label>
+                <Input value={form.name} onChange={(e) => update("name", e.target.value)} required />
               </div>
               <div>
-                <Label>Email</Label>
-                <Input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} />
+                <Label>Email *</Label>
+                <Input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} required />
+              </div>
+              <div>
+                <Label>Password *</Label>
+                <Input type="password" value={form.password} onChange={(e) => update("password", e.target.value)} required />
+              </div>
+              <div>
+                <Label>Confirm Password *</Label>
+                <Input type="password" value={form.confirmPassword} onChange={(e) => update("confirmPassword", e.target.value)} required />
               </div>
               <div>
                 <Label>Title</Label>
@@ -141,7 +162,7 @@ export default function ApplyMentorPage() {
               <Input value={form.expertise} onChange={(e) => update("expertise", e.target.value)} />
             </div>
             <div className="flex justify-end">
-              <Button onClick={submit} disabled={!form.name || !form.email || !form.field}>Submit Application</Button>
+              <Button onClick={submit} disabled={!form.name || !form.email || !form.password || !form.confirmPassword || !form.field || form.password !== form.confirmPassword}>Submit Application</Button>
             </div>
           </CardContent>
         </Card>

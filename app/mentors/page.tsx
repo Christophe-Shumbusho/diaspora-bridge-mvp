@@ -14,22 +14,15 @@ export default function MentorsPage() {
   const [isLoaded, setIsLoaded] = useState(false)
 
   useEffect(() => {
+    loadMentors()
+  }, [])
+
+  const loadMentors = async () => {
     // Load mentors only on client side to avoid hydration mismatch
     try {
       const loadedMentors = getApprovedMentors()
-      console.log("MentorsPage - Raw approved mentors:", loadedMentors)
-      
-      // If no approved mentors from database, fall back to sample mentors for demo
-      if (loadedMentors.length === 0) {
-        console.log("No approved mentors found, using sample mentors for demo")
-        const sampleMentors = SAMPLE_MENTORS.filter((m: Mentor) => m.availability === "available")
-        setMentors(sampleMentors)
-      } else {
-        setMentors(loadedMentors)
-      }
-      
+      setMentors(loadedMentors)
       setIsLoaded(true)
-      console.log("MentorsPage - Final mentors set:", loadedMentors.length > 0 ? loadedMentors : SAMPLE_MENTORS.filter((m: Mentor) => m.availability === "available"))
     } catch (error) {
       console.error("Error loading mentors:", error)
       // Fallback to sample mentors on error
@@ -37,7 +30,7 @@ export default function MentorsPage() {
       setMentors(sampleMentors)
       setIsLoaded(true)
     }
-  }, [])
+  }
 
   return (
     <div className="min-h-screen bg-background px-4 py-8">
@@ -52,85 +45,6 @@ export default function MentorsPage() {
           <p className="text-muted-foreground">Connect with successful Rwandan professionals from around the world</p>
         </div>
 
-        {/* Debug Info */}
-        {isLoaded && (
-          <div className="mb-4 p-4 bg-muted rounded-lg">
-            <h3 className="font-semibold mb-2">Debug Info:</h3>
-            <p>Total mentors found: {mentors.length}</p>
-            <p>Check browser console for detailed logs</p>
-            {mentors.length > 0 && (
-              <div className="mt-2">
-                <p>Mentor names: {mentors.map((m: any) => m.name).join(", ")}</p>
-              </div>
-            )}
-            <div className="mt-4 flex gap-2">
-            <Button 
-              onClick={() => {
-                // Create a test mentor
-                const testMentor = db.createUser({
-                  id: `test-mentor-${Date.now()}`,
-                  name: "Test Mentor",
-                  email: "test@mentor.com",
-                  password: "test123",
-                  role: "mentor",
-                  status: "pending",
-                  ...{
-                    title: "Senior Developer",
-                    company: "Tech Corp",
-                    field: "Software Engineering",
-                    location: "Kigali, Rwanda",
-                    yearsOfExperience: 5,
-                    bio: "Experienced software developer passionate about mentoring.",
-                    expertise: ["JavaScript", "React", "Node.js"],
-                    availability: "available",
-                    conversationStarters: ["What programming languages interest you?"],
-                    linkedinUrl: "",
-                    websiteUrl: "",
-                    whyMentor: "To give back to the community",
-                    achievements: []
-                  }
-                } as any)
-                console.log("Created test mentor:", testMentor)
-                const loadedMentors = getApprovedMentors()
-                setMentors(loadedMentors)
-              }}
-              variant="outline"
-              size="sm"
-            >
-              Create Test Mentor
-            </Button>
-            <Button 
-              onClick={() => {
-                // Approve all pending mentors
-                const pending = db.getPendingMentors()
-                pending.forEach(mentor => {
-                  db.approveMentor(mentor.id)
-                  console.log("Approved mentor:", mentor.name)
-                })
-                const loadedMentors = getApprovedMentors()
-                setMentors(loadedMentors)
-              }}
-              variant="outline"
-              size="sm"
-            >
-              Approve All Pending
-            </Button>
-            <Button 
-              onClick={() => {
-                // Clear localStorage
-                localStorage.removeItem('diaspora-bridge-users')
-                localStorage.removeItem('diaspora-bridge-requests')
-                localStorage.removeItem('diaspora-bridge-conversations')
-                setMentors([])
-              }}
-              variant="destructive"
-              size="sm"
-            >
-              Clear Data
-            </Button>
-            </div>
-          </div>
-        )}
 
         {/* Mentors Grid */}
         {mentors.length === 0 ? (

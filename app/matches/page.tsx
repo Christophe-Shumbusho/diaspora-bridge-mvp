@@ -57,12 +57,29 @@ export default function MatchesPage() {
     setIsSubmittingRequest(true)
     try {
       // Create mentorship request
-      const request = db.createMentorshipRequest({
+      const requestId = `req-${Date.now()}-${user.id}-${mentor.id}`
+      const request = {
+        id: requestId,
         menteeId: user.id,
         mentorId: mentor.id,
-        status: "pending",
-        message: requestMessage.trim()
-      })
+        status: "pending" as const,
+        message: requestMessage.trim(),
+        specificGoals: requestMessage.trim(),
+        timeCommitment: "1 hour per week",
+        preferredFrequency: "weekly" as const,
+        createdAt: new Date(),
+        menteeInfo: {
+          name: user.name,
+          email: user.email,
+          careerField: (user as MenteeProfile).profile?.careerField || "General",
+          currentEducation: (user as MenteeProfile).profile?.currentEducation || "Not specified",
+          location: (user as MenteeProfile).profile?.location || "Not specified",
+          goals: requestMessage.trim(),
+          experience: (user as MenteeProfile).profile?.experienceLevel || "Entry Level",
+          interests: (user as MenteeProfile).profile?.interests || []
+        }
+      }
+      db.createMentorshipRequest(request)
 
       // Send notification email to mentor (simulated)
       console.log(`📧 Mentorship request sent to ${mentor.email}`)
@@ -111,7 +128,7 @@ export default function MatchesPage() {
             <div>
               <h1 className="text-3xl font-bold text-foreground mb-2">Your Mentor Matches</h1>
               <p className="text-muted-foreground">
-                We found {matches.length} mentors that match your interests in {(user as MenteeProfile).careerField}
+                We found {matches.length} mentors that match your interests in {(user as MenteeProfile).profile?.careerField || "your field"}
               </p>
             </div>
             <Button variant="outline" onClick={refreshMatches} disabled={loading}>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeft, MapPin, Briefcase, MessageCircle, Star } from "lucide-react"
 import Link from "next/link"
 import { SAMPLE_MENTORS, getApprovedMentors } from "@/lib/mentors"
+import { db, type MentorApplication } from "@/lib/database"
 import { notFound } from "next/navigation"
 
 interface MentorProfilePageProps {
@@ -16,10 +17,52 @@ interface MentorProfilePageProps {
 export default function MentorProfilePage({ params }: MentorProfilePageProps) {
   const { id } = use(params)
   
-  // First check approved mentors, then fall back to sample mentors for demo
-  const approvedMentors = getApprovedMentors()
-  const mentor = approvedMentors.find((m) => m.id === id) || 
-                 SAMPLE_MENTORS.find((m) => m.id === id)
+  // Try to find mentor from multiple sources
+  let mentor = null
+  
+  console.log(`Looking for mentor ID: ${id}`)
+  
+  // First check database for approved mentors
+  const dbMentor = db.getUserById(id) as MentorApplication
+  console.log(`Database mentor found:`, dbMentor)
+  
+  if (dbMentor && dbMentor.role === "mentor" && dbMentor.status === "active") {
+    console.log(`Using database mentor: ${dbMentor.name}`)
+    mentor = {
+      id: dbMentor.id,
+      name: dbMentor.name,
+      email: dbMentor.email,
+      role: dbMentor.role,
+      title: dbMentor.title || "Software Developer", // Default value
+      company: dbMentor.company || "Tech Company", // Default value
+      field: dbMentor.field || "Technology", // Default value
+      location: dbMentor.location || "Remote", // Default value
+      experience: dbMentor.yearsOfExperience || 3, // Default value
+      bio: dbMentor.bio || "Experienced professional ready to mentor.", // Default value
+      expertise: dbMentor.expertise || ["General"], // Default value
+      availability: dbMentor.availability || "available", // Default value
+      imageUrl: dbMentor.imageUrl || "/placeholder.svg",
+      conversationStarters: dbMentor.conversationStarters || [
+        "What are your career goals?",
+        "What challenges are you facing in your field?",
+        "How can I help you grow professionally?"
+      ]
+    }
+  }
+  
+  // If not found in database, check approved mentors list
+  if (!mentor) {
+    console.log(`Database mentor not found, checking approved mentors list`)
+    const allMentors = getApprovedMentors()
+    console.log(`All approved mentors:`, allMentors.map(m => ({ id: m.id, name: m.name })))
+    mentor = allMentors.find((m) => m.id === id)
+    if (mentor) {
+      console.log(`Found mentor in approved list: ${mentor.name}`)
+    } else {
+      console.log(`Mentor not found in approved list either`)
+      console.log(`Available mentor IDs:`, allMentors.map(m => m.id))
+    }
+  }
 
   if (!mentor) {
     notFound()
@@ -59,7 +102,7 @@ export default function MentorProfilePage({ params }: MentorProfilePageProps) {
                   </div>
                   <div className="flex items-center gap-1 text-muted-foreground">
                     <Briefcase className="h-4 w-4" />
-                    {mentor.experience} years
+                    {(mentor as any).experience || (mentor as any).yearsOfExperience} years
                   </div>
                 </div>
 

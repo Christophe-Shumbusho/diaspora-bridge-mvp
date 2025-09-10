@@ -12,7 +12,7 @@ import { ArrowLeft, ArrowRight, CheckCircle, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { AuthService, type MenteeSignupData } from "@/lib/auth-service"
-import { db } from "@/lib/database"
+import { db, type MentorApplication } from "@/lib/database"
 import { SAMPLE_MENTORS, getApprovedMentors } from "@/lib/mentors"
 import { notFound } from "next/navigation"
 
@@ -54,10 +54,39 @@ export default function RequestMentorshipPage({ params }: RequestMentorshipPageP
   // Unwrap params using React.use()
   const { mentorId } = use(params)
   
-  // First check approved mentors from database, then fallback to sample mentors
-  const approvedMentors = getApprovedMentors()
-  const mentor = approvedMentors.find(m => m.id === mentorId) || 
-                 SAMPLE_MENTORS.find(m => m.id === mentorId)
+  // Try to find mentor from multiple sources
+  let mentor = null
+  
+  // First check database for approved mentors
+  const dbMentor = db.getUserById(mentorId) as MentorApplication
+  if (dbMentor && dbMentor.role === "mentor" && dbMentor.status === "active") {
+    mentor = {
+      id: dbMentor.id,
+      name: dbMentor.name,
+      email: dbMentor.email,
+      role: dbMentor.role,
+      title: dbMentor.title,
+      company: dbMentor.company,
+      field: dbMentor.field,
+      location: dbMentor.location,
+      experience: dbMentor.yearsOfExperience,
+      bio: dbMentor.bio,
+      expertise: dbMentor.expertise,
+      availability: dbMentor.availability,
+      imageUrl: dbMentor.imageUrl || "/placeholder.svg",
+      conversationStarters: dbMentor.conversationStarters || [
+        "What are your career goals?",
+        "What challenges are you facing in your field?",
+        "How can I help you grow professionally?"
+      ]
+    }
+  }
+  
+  // If not found in database, check approved mentors list
+  if (!mentor) {
+    const allMentors = getApprovedMentors()
+    mentor = allMentors.find(m => m.id === mentorId)
+  }
   
   if (!mentor) {
     notFound()
@@ -155,8 +184,8 @@ export default function RequestMentorshipPage({ params }: RequestMentorshipPageP
         // Add a small delay to ensure data is saved
         await new Promise(resolve => setTimeout(resolve, 100))
         
-        // Redirect to success page
-        router.push(`/request-sent/${requestId}`)
+        // Redirect to mentee dashboard
+        router.push(`/mentee/dashboard`)
       } else {
         setError(result.error || "Failed to create account")
       }

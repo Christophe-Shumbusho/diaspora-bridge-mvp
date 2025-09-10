@@ -74,6 +74,17 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
+          <Card className="text-center shadow-soft hover:shadow-glow transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-accent/20 to-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-soft">
+                  <Globe className="h-8 w-8 text-accent" />
+                </div>
+                <CardTitle className="text-2xl mb-3">Browsing mentor</CardTitle>
+                <CardDescription className="text-base leading-relaxed">
+                  Get matched with mentors based on your field, goals, and background.
+                </CardDescription>
+              </CardHeader>
+            </Card>
             <Card className="text-center shadow-soft hover:shadow-glow transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <div className="w-16 h-16 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-soft">
@@ -86,17 +97,7 @@ export default function HomePage() {
               </CardHeader>
             </Card>
 
-            <Card className="text-center shadow-soft hover:shadow-glow transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-accent/20 to-secondary/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-soft">
-                  <Globe className="h-8 w-8 text-accent" />
-                </div>
-                <CardTitle className="text-2xl mb-3">Smart Matching</CardTitle>
-                <CardDescription className="text-base leading-relaxed">
-                  Get matched with mentors based on your field, goals, and background using our AI algorithm
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            
 
             <Card className="text-center shadow-soft hover:shadow-glow transition-all duration-300 border-0 bg-card/50 backdrop-blur-sm">
               <CardHeader className="pb-4">
@@ -105,7 +106,7 @@ export default function HomePage() {
                 </div>
                 <CardTitle className="text-2xl mb-3">Start Conversations</CardTitle>
                 <CardDescription className="text-base leading-relaxed">
-                  Connect directly with mentors through our secure messaging platform with guided conversation starters
+                  Connect directly with mentors through our secure messaging platform.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -220,23 +221,12 @@ export default function HomePage() {
                   </p>
                 </div>
               </div>
-
               <div className="flex items-start gap-4">
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
-                  <h3 className="font-semibold mb-2">48-Hour Connections</h3>
+                  <h3 className="font-semibold mb-2">Browsing mentors</h3>
                   <p className="text-muted-foreground">
-                    Focused time windows ensure meaningful conversations and committed engagement.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold mb-2">Smart Matching</h3>
-                  <p className="text-muted-foreground">
-                    Our algorithm matches you with mentors based on your goals, field, and background.
+                    Here you can browse mentors based on your goals, field, and background.
                   </p>
                 </div>
               </div>
@@ -259,16 +249,6 @@ export default function HomePage() {
                   <h3 className="font-semibold mb-2">Free Platform</h3>
                   <p className="text-muted-foreground">
                     Access to mentorship opportunities at no cost - our mission is to empower Rwandan youth.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-4">
-                <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
-                <div>
-                  <h3 className="font-semibold mb-2">Conversation Starters</h3>
-                  <p className="text-muted-foreground">
-                    Get suggested questions and topics to help you make the most of your mentorship conversations.
                   </p>
                 </div>
               </div>
