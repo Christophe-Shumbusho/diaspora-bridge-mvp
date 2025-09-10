@@ -227,7 +227,7 @@ export default function RequestMentorshipPage({ params }: RequestMentorshipPageP
             Back to {mentor.name}'s Profile
           </Link>
           <h1 className="text-3xl font-bold text-foreground">Request Mentorship</h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-black/60 mt-2">
             Create your account and send a mentorship request to {mentor.name}
           </p>
         </div>
@@ -272,7 +272,7 @@ export default function RequestMentorshipPage({ params }: RequestMentorshipPageP
             <Card>
               <CardHeader>
                 <CardTitle>Create Your Account</CardTitle>
-                <CardDescription>
+                <CardDescription className="text-black/60">
                   Let's start with your basic information
                 </CardDescription>
               </CardHeader>
@@ -380,7 +380,7 @@ export default function RequestMentorshipPage({ params }: RequestMentorshipPageP
             <Card>
               <CardHeader>
                 <CardTitle>Review Your Request</CardTitle>
-                <CardDescription>
+                <CardDescription className="text-black/60">
                   Confirm your information and send your mentorship request to {mentor.name}
                 </CardDescription>
               </CardHeader>

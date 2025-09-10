@@ -16,7 +16,7 @@ export default function HomePage() {
             Connect with Rwandan
             <span className="gradient-primary bg-clip-text text-transparent block">Diaspora Mentors</span>
           </h1>
-          <p className="text-xl md:text-2xl text-black/60 mb-12 max-w-3xl mx-auto text-pretty leading-relaxed">
+          <p className="text-xl md:text-2xl text-black/80 mb-12 max-w-3xl mx-auto text-pretty leading-relaxed">
             Bridge the gap between ambition and opportunity. Get personalized career guidance from successful Rwandan
             professionals around the world.
           </p>
@@ -60,12 +60,12 @@ export default function HomePage() {
       {/* Features Section */}
       <section className="px-4 py-20 bg-gradient-to-b from-muted/30 to-background">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-4">
+          <div className="text-center mb-24">
+            <Badge variant="outline" className="mb-4 text-lg px-6 py-2">
               How it works
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-balance">Simple. Effective. Transformative.</h2>
-            <p className="text-xl text-black/60 max-w-2xl mx-auto text-pretty">
+            <p className="text-xl text-black/80 max-w-2xl mx-auto text-pretty">
               Three simple steps to unlock your potential with world-class mentorship
             </p>
           </div>
@@ -76,7 +76,7 @@ export default function HomePage() {
                   <Globe className="h-8 w-8 text-accent" />
                 </div>
                 <CardTitle className="text-2xl mb-3">Browsing mentor</CardTitle>
-                <CardDescription className="text-base leading-relaxed">
+                <CardDescription className="text-base leading-relaxed text-black/100">
                   Get matched with mentors based on your field, goals, and background.
                 </CardDescription>
               </CardHeader>
@@ -87,7 +87,7 @@ export default function HomePage() {
                   <Users className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-2xl mb-3">Quick Signup</CardTitle>
-                <CardDescription className="text-base leading-relaxed">
+                <CardDescription className="text-base leading-relaxed text-black/100">
                   Answer 3 simple questions about your career goals and interests to get started
                 </CardDescription>
               </CardHeader>
@@ -101,7 +101,7 @@ export default function HomePage() {
                   <MessageCircle className="h-8 w-8 text-secondary" />
                 </div>
                 <CardTitle className="text-2xl mb-3">Start Conversations</CardTitle>
-                <CardDescription className="text-base leading-relaxed">
+                <CardDescription className="text-base leading-relaxed text-black/100">
                   Connect directly with mentors through our secure messaging platform.
                 </CardDescription>
               </CardHeader>
@@ -114,11 +114,11 @@ export default function HomePage() {
       <section className="px-4 py-20">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <Badge variant="outline" className="mb-4">
+            <Badge variant="outline" className="mb-4 text-lg px-6 py-2">
               Success stories
             </Badge>
             <h2 className="text-4xl md:text-5xl font-bold mb-6 text-balance">Real Impact, Real Results</h2>
-            <p className="text-xl text-black/60 max-w-2xl mx-auto text-pretty">
+            <p className="text-xl text-black/80 max-w-2xl mx-auto text-pretty">
               See how our platform has transformed careers and opened doors for ambitious young professionals
             </p>
           </div>
@@ -133,7 +133,7 @@ export default function HomePage() {
                   />
                   <div>
                     <CardTitle className="text-xl mb-1">Sarah Mukamana</CardTitle>
-                    <CardDescription className="text-base">Software Engineering Student</CardDescription>
+                    <CardDescription className="text-base text-black/80">Software Engineering Student</CardDescription>
                     <Badge variant="secondary" className="mt-2 text-xs">
                       Tech Industry
                     </Badge>
@@ -141,7 +141,7 @@ export default function HomePage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-black/60 mb-6 text-lg leading-relaxed">
+                <p className="text-black/80 mb-6 text-lg leading-relaxed">
                   "Through Diaspora Bridge, I connected with Dr. Aline who helped me land my first internship at a tech
                   company. Her guidance on technical interviews was invaluable."
                 </p>
@@ -171,7 +171,7 @@ export default function HomePage() {
                   />
                   <div>
                     <CardTitle className="text-xl mb-1">David Nzeyimana</CardTitle>
-                    <CardDescription className="text-base">Business Graduate</CardDescription>
+                    <CardDescription className="text-base text-black/80">Business Graduate</CardDescription>
                     <Badge variant="secondary" className="mt-2 text-xs">
                       Entrepreneurship
                     </Badge>
@@ -179,7 +179,7 @@ export default function HomePage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-black/60 mb-6 text-lg leading-relaxed">
+                <p className="text-black/80 mb-6 text-lg leading-relaxed">
                   "Patrick's mentorship helped me validate my startup idea and connect with investors. I'm now running
                   my own fintech company serving East African markets."
                 </p>
@@ -212,7 +212,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Verified Mentors</h3>
-                  <p className="text-black/60">
+                  <p className="text-black/80">
                     All mentors are verified professionals with proven track records in their fields.
                   </p>
                 </div>
@@ -221,7 +221,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Browsing mentors</h3>
-                  <p className="text-black/60">
+                  <p className="text-black/80">
                     Here you can browse mentors based on your goals, field, and background.
                   </p>
                 </div>
@@ -233,7 +233,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Global Network</h3>
-                  <p className="text-black/60">
+                  <p className="text-black/80">
                     Connect with Rwandan professionals across North America, Europe, and beyond.
                   </p>
                 </div>
@@ -243,7 +243,7 @@ export default function HomePage() {
                 <CheckCircle className="h-6 w-6 text-primary mt-1 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold mb-2">Free Platform</h3>
-                  <p className="text-black/60">
+                  <p className="text-black/80">
                     Access to mentorship opportunities at no cost - our mission is to empower Rwandan youth.
                   </p>
                 </div>
@@ -256,7 +256,7 @@ export default function HomePage() {
       {/* CTA Section */}
       <section className="px-4 py-20 bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
         <div className="max-w-5xl mx-auto text-center">
-          <Badge variant="secondary" className="mb-6 px-4 py-2">
+          <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm">
             <Sparkles className="w-4 h-4 mr-2" />
             Join the movement
           </Badge>
@@ -279,8 +279,7 @@ export default function HomePage() {
             </Button>
           </div>
           <p className="text-sm text-black/60">
-            ✨ Free forever • No credit card required • Get matched in 24 hours
-          </p>
+            ✨ Free forever • No credit card required • Get matched          </p>
         </div>
       </section>
     </div>

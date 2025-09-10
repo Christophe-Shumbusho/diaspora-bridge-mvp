@@ -38,7 +38,7 @@ export default function RequestSentPage({ params }: RequestSentPageProps) {
               <CheckCircle className="h-8 w-8 text-green-600" />
             </div>
             <CardTitle className="text-2xl">Request Sent Successfully!</CardTitle>
-            <CardDescription className="text-lg">
+            <CardDescription className="text-lg text-black/60">
               Your mentorship request has been sent to {mentor.name}
             </CardDescription>
           </CardHeader>

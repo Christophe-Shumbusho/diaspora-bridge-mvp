@@ -19,16 +19,16 @@ export interface MenteeProfile extends User {
 }
 
 export interface MentorProfile extends User {
-  role: "mentor"
-  title: string
-  company: string
-  field: string
-  location: string
-  experience: number
-  bio: string
-  expertise: string[]
-  availability: "available" | "busy" | "unavailable"
-  imageUrl: string
+  role: "mentor",
+  title: string,
+  company: string,
+  field: string,
+  location: string,
+  experience: string,
+  bio: string,
+  expertise: string[],
+  availability: "available" | "busy" | "unavailable",
+  imageUrl: string,
   conversationStarters: string[]
 }
 
@@ -137,7 +137,7 @@ export function createMentorProfile(data: {
   company: string
   field: string
   location: string
-  experience: number
+  experience: string
   bio: string
   expertise: string[]
   availability: "available" | "busy" | "unavailable"

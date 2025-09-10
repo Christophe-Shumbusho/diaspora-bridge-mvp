@@ -31,11 +31,8 @@ export function Footer() {
               <Link href="/matches" className="block text-sm text-black/60 hover:text-foreground">
                 Your Matches
               </Link>
-              <Link href="/chat" className="block text-sm text-black/60 hover:text-foreground">
-                Conversations
-              </Link>
-              <Link href="/notifications" className="block text-sm text-black/60 hover:text-foreground">
-                Email Settings
+              <Link href="/apply-mentor" className="block text-sm text-black/60 hover:text-foreground">
+                apply to be a mentor
               </Link>
             </div>
           </div>
@@ -50,7 +47,7 @@ export function Footer() {
               </div>
               <div className="flex items-center gap-2 text-sm text-black/60">
                 <Phone className="h-4 w-4" />
-                +250 788 123 456
+                +250 784702015
               </div>
               <div className="flex items-center gap-2 text-sm text-black/60">
                 <MapPin className="h-4 w-4" />

@@ -229,7 +229,7 @@ export default function SignupPage() {
               Back to Home
             </Link>
             <h1 className="text-4xl font-bold text-foreground mb-4">Join Diaspora Bridge</h1>
-            <p className="text-xl text-muted-foreground">Choose how you'd like to participate in our community</p>
+            <p className="text-xl text-black/60">Choose how you'd like to participate in our community</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -239,12 +239,12 @@ export default function SignupPage() {
                   <Users className="h-8 w-8 text-primary" />
                 </div>
                 <CardTitle className="text-2xl">I'm looking for mentorship</CardTitle>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base text-black/60">
                   Connect with experienced Rwandan professionals to guide your career journey
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2 text-sm text-black/60">
                   <li>• Get matched with mentors in your field</li>
                   <li>• Receive personalized career guidance</li>
                   <li>• Access to exclusive networking opportunities</li>
@@ -263,12 +263,12 @@ export default function SignupPage() {
                   <Briefcase className="h-8 w-8 text-accent" />
                 </div>
                 <CardTitle className="text-2xl">I want to mentor others</CardTitle>
-                <CardDescription className="text-base">
+                <CardDescription className="text-base text-black/60">
                   Share your expertise and help the next generation of Rwandan professionals
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-sm text-muted-foreground">
+                <ul className="space-y-2 text-sm text-black/60">
                   <li>• Give back to the Rwandan community</li>
                   <li>• Share your professional experience</li>
                   <li>• Flexible mentoring schedule</li>
@@ -298,7 +298,7 @@ export default function SignupPage() {
           <h1 className="text-3xl font-bold text-foreground">
             {userType === "mentee" ? "Join as Mentee" : "Apply as Mentor"}
           </h1>
-          <p className="text-muted-foreground mt-2">
+          <p className="text-black/60 mt-2">
             {userType === "mentee" 
               ? "Complete your profile to get matched with the perfect mentor" 
               : "Submit your application to become a verified mentor"
@@ -341,7 +341,7 @@ export default function SignupPage() {
               {step === 4 && (userType === "mentee" ? "Additional Details" : "Mentoring Details")}
               {step === 5 && "Application Details"}
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-black/60">
               {step === 1 && "Create your account with email and password"}
               {step === 2 && (userType === "mentee" ? "Tell us about your career aspirations" : "Share your professional background")}
               {step === 3 && (userType === "mentee" ? "Select your interests and preferences" : "Highlight your areas of expertise")}

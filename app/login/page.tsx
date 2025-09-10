@@ -99,7 +99,7 @@ export default function LoginPage() {
         <Card>
           <CardHeader>
             <CardTitle>Sign In</CardTitle>
-            <CardDescription>
+            <CardDescription className="text-black/60">
               Enter your email and password to access your account
             </CardDescription>
           </CardHeader>
@@ -152,32 +152,12 @@ export default function LoginPage() {
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <Link href="/signup" className="text-primary hover:underline">
+                <Link href="/mentors" className="text-primary hover:underline">
                   Sign up here
                 </Link>
               </p>
             </div>
-
-            {/* Quick Login for Demo */}
-            <div className="mt-6 pt-6 border-t">
-              <p className="text-xs text-muted-foreground mb-3 text-center">Quick Demo Login:</p>
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full text-xs"
-                  onClick={() => {
-                    setFormData({
-                      email: "admin@diasporabridge.com",
-                      password: "admin123",
-                      userType: "admin"
-                    })
-                  }}
-                >
-                  Admin Demo (admin@diasporabridge.com)
-                </Button>
-              </div>
-            </div>
+            
           </CardContent>
         </Card>
       </div>
