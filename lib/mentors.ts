@@ -253,5 +253,39 @@ export function getMatchingMentors(careerField: string, goals: string): Mentor[]
 }
 
 export function getAllAvailableMentors(): Mentor[] {
+  // Only show mentors who are approved (active status) and available
   return SAMPLE_MENTORS.filter((mentor) => mentor.availability !== "unavailable")
+}
+
+import { db, type MentorApplication } from './database'
+
+export function getApprovedMentors(): Mentor[] {
+  // Get mentors from database who have been approved by admin
+  const approvedMentors = db.getApprovedMentors()
+  console.log("getApprovedMentors - Raw from DB:", approvedMentors)
+  
+  const mappedMentors = approvedMentors.map((mentor: MentorApplication) => ({
+    id: mentor.id,
+    name: mentor.name,
+    email: mentor.email,
+    role: mentor.role,
+    title: mentor.title,
+    company: mentor.company,
+    field: mentor.field,
+    location: mentor.location,
+    experience: mentor.yearsOfExperience,
+    bio: mentor.bio,
+    expertise: mentor.expertise,
+    availability: mentor.availability,
+    imageUrl: mentor.imageUrl || "/placeholder.svg",
+    conversationStarters: mentor.conversationStarters || [],
+    createdAt: mentor.createdAt
+  }))
+  
+  console.log("getApprovedMentors - Mapped mentors:", mappedMentors)
+  
+  const filteredMentors = mappedMentors.filter((mentor) => mentor.availability !== "unavailable")
+  console.log("getApprovedMentors - Filtered mentors:", filteredMentors)
+  
+  return filteredMentors
 }

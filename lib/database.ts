@@ -49,8 +49,21 @@ export interface MentorshipRequest {
   mentorId: string
   status: "pending" | "approved" | "rejected"
   message: string
+  specificGoals: string
+  timeCommitment: string
+  preferredFrequency: "weekly" | "biweekly" | "monthly"
   createdAt: Date
   approvedAt?: Date
+  menteeInfo: {
+    name: string
+    email: string
+    careerField: string
+    currentEducation: string
+    location: string
+    goals: string
+    experience: string
+    interests: string[]
+  }
 }
 
 export interface Conversation {
@@ -73,34 +86,120 @@ export interface Message {
 
 // In-memory storage (replace with real database in production)
 class Database {
-  private users: Map<string, User> = new Map()
-  private mentorshipRequests: Map<string, MentorshipRequest> = new Map()
-  private conversations: Map<string, Conversation> = new Map()
+  private users = new Map<string, User>()
+  private mentorshipRequests = new Map<string, MentorshipRequest>()
+  private conversations = new Map<string, Conversation>()
 
   constructor() {
-    // Initialize with admin user
-    this.createUser({
-      id: "admin-1",
-      name: "Admin User",
-      email: "admin@diasporabridge.com",
-      password: "admin123", // In production, this would be hashed
-      role: "admin",
-      status: "active",
-      createdAt: new Date(),
-      updatedAt: new Date()
-    })
+    // Only load from storage and initialize on client side
+    if (typeof window !== 'undefined') {
+      this.loadFromStorage()
+    }
+    this.initializeSampleData()
+  }
+
+  private loadFromStorage() {
+    if (typeof window !== 'undefined') {
+      try {
+        const usersData = localStorage.getItem('diaspora-bridge-users')
+        const requestsData = localStorage.getItem('diaspora-bridge-requests')
+        const conversationsData = localStorage.getItem('diaspora-bridge-conversations')
+
+        if (usersData) {
+          const users = JSON.parse(usersData)
+          users.forEach((user: any) => {
+            // Convert date strings back to Date objects
+            user.createdAt = new Date(user.createdAt)
+            user.updatedAt = new Date(user.updatedAt)
+            this.users.set(user.id, user)
+          })
+        }
+
+        if (requestsData) {
+          const requests = JSON.parse(requestsData)
+          requests.forEach((request: any) => {
+            request.createdAt = new Date(request.createdAt)
+            request.updatedAt = new Date(request.updatedAt)
+            this.mentorshipRequests.set(request.id, request)
+          })
+        }
+
+        if (conversationsData) {
+          const conversations = JSON.parse(conversationsData)
+          conversations.forEach((conversation: any) => {
+            conversation.createdAt = new Date(conversation.createdAt)
+            conversation.updatedAt = new Date(conversation.updatedAt)
+            conversation.messages.forEach((message: any) => {
+              message.timestamp = new Date(message.timestamp)
+            })
+            this.conversations.set(conversation.id, conversation)
+          })
+        }
+      } catch (error) {
+        console.warn('Failed to load data from localStorage:', error)
+      }
+    }
+  }
+
+  private saveToStorage() {
+    if (typeof window !== 'undefined') {
+      try {
+        const users = Array.from(this.users.values())
+        const requests = Array.from(this.mentorshipRequests.values())
+        const conversations = Array.from(this.conversations.values())
+
+        localStorage.setItem('diaspora-bridge-users', JSON.stringify(users))
+        localStorage.setItem('diaspora-bridge-requests', JSON.stringify(requests))
+        localStorage.setItem('diaspora-bridge-conversations', JSON.stringify(conversations))
+      } catch (error) {
+        console.warn('Failed to save data to localStorage:', error)
+      }
+    }
+  }
+
+  private initializeSampleData() {
+    // Only initialize if no data exists (to avoid overwriting localStorage data)
+    if (this.users.size === 0) {
+      // Initialize with admin user
+      const adminUser: User = {
+        id: "admin-1",
+        name: "Admin User",
+        email: "admin@diasporabridge.com",
+        password: "admin123", // In production, this would be hashed
+        role: "admin",
+        status: "active",
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+      this.users.set(adminUser.id, adminUser)
+      
+      // Only save to storage if we're on the client side
+      if (typeof window !== 'undefined') {
+        this.saveToStorage()
+      }
+    }
   }
 
   // User operations
-  createUser(userData: Omit<User, 'id'> & { id?: string }): User {
-    const user: User = {
-      id: userData.id || `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      ...userData,
-      createdAt: userData.createdAt || new Date(),
-      updatedAt: new Date()
+  createUser(user: Partial<User>): User {
+    const newUser: User = {
+      id: user.id || `user-${Date.now()}`,
+      name: user.name || "",
+      email: user.email || "",
+      password: user.password || "",
+      role: user.role || "mentee",
+      status: user.status || "active",
+      createdAt: user.createdAt || new Date(),
+      updatedAt: new Date(),
+      ...user
     }
-    this.users.set(user.id, user)
-    return user
+    
+    this.users.set(newUser.id, newUser)
+    // Only save to storage if we're on the client side
+    if (typeof window !== 'undefined') {
+      this.saveToStorage()
+    }
+    return newUser
   }
 
   getUserByEmail(email: string): User | null {
@@ -122,6 +221,10 @@ class Database {
 
     const updatedUser = { ...user, ...updates, updatedAt: new Date() }
     this.users.set(id, updatedUser)
+    // Only save to storage if we're on the client side
+    if (typeof window !== 'undefined') {
+      this.saveToStorage()
+    }
     return updatedUser
   }
 
@@ -131,11 +234,45 @@ class Database {
   }
 
   getApprovedMentors(): MentorApplication[] {
-    return this.getAllMentors().filter(mentor => mentor.status === "active")
+    const allMentors = this.getAllMentors()
+    console.log("Database - All mentors:", allMentors)
+    console.log("Database - All mentors count:", allMentors.length)
+    
+    const approved = allMentors.filter(mentor => mentor.status === "active")
+    console.log("Database - Approved mentors:", approved)
+    console.log("Database - Approved count:", approved.length)
+    
+    return approved
   }
 
   getPendingMentors(): MentorApplication[] {
     return this.getAllMentors().filter(mentor => mentor.status === "pending")
+  }
+
+  approveMentor(mentorId: string): void {
+    const mentor = this.users.get(mentorId) as MentorApplication
+    if (mentor && mentor.role === "mentor") {
+      mentor.status = "active"
+      mentor.updatedAt = new Date()
+      this.users.set(mentorId, mentor)
+      // Only save to storage if we're on the client side
+      if (typeof window !== 'undefined') {
+        this.saveToStorage()
+      }
+    }
+  }
+
+  rejectMentor(mentorId: string): void {
+    const mentor = this.users.get(mentorId) as MentorApplication
+    if (mentor && mentor.role === "mentor") {
+      mentor.status = "rejected"
+      mentor.updatedAt = new Date()
+      this.users.set(mentorId, mentor)
+      // Only save to storage if we're on the client side
+      if (typeof window !== 'undefined') {
+        this.saveToStorage()
+      }
+    }
   }
 
   // Authentication
@@ -148,14 +285,16 @@ class Database {
   }
 
   // Mentorship requests
-  createMentorshipRequest(data: Omit<MentorshipRequest, 'id' | 'createdAt'>): MentorshipRequest {
-    const request: MentorshipRequest = {
-      id: `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      ...data,
-      createdAt: new Date()
-    }
+  createMentorshipRequest(request: MentorshipRequest): void {
     this.mentorshipRequests.set(request.id, request)
-    return request
+    // Only save to storage if we're on the client side
+    if (typeof window !== 'undefined') {
+      this.saveToStorage()
+    }
+  }
+
+  getMentorshipRequest(id: string): MentorshipRequest | null {
+    return this.mentorshipRequests.get(id) || null
   }
 
   getMentorshipRequestsForMentor(mentorId: string): MentorshipRequest[] {
@@ -202,6 +341,12 @@ class Database {
   getConversationsForUser(userId: string): Conversation[] {
     return Array.from(this.conversations.values())
       .filter(conv => conv.menteeId === userId || conv.mentorId === userId)
+  }
+
+  getConversationByRequest(requestId: string): Conversation | null {
+    // Find conversation created from a mentorship request
+    return Array.from(this.conversations.values())
+      .find(conv => conv.id.includes(requestId)) || null
   }
 
   addMessage(conversationId: string, senderId: string, content: string): Message | null {

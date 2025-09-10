@@ -6,57 +6,65 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { ArrowLeft, LogIn, AlertCircle } from "lucide-react"
+import { ArrowLeft, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
-import { getMentorByEmail } from "@/lib/mentors-repo"
+import { AuthService } from "@/lib/auth-service"
+import { db, type MentorApplication } from "@/lib/database"
 
 export default function MentorLoginPage() {
   const router = useRouter()
   const { login } = useAuth()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  })
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setIsSubmitting(true)
     setError("")
-    setIsLoading(true)
 
     try {
-      // Find mentor by email
-      const mentor = getMentorByEmail(email)
-      
-      if (!mentor) {
-        setError("No mentor account found with this email. Please check if your application has been approved.")
-        return
-      }
+      const result = await AuthService.login({
+        email: formData.email,
+        password: formData.password
+      })
 
-      // For demo purposes, we'll use a simple password check
-      // In production, this would be properly hashed and verified
-      if (password !== "mentor123") {
-        setError("Invalid password. Use 'mentor123' for demo.")
-        return
-      }
+      if (result.success && result.user) {
+        if (result.user.role !== "mentor") {
+          setError("This login is for mentors only. Please use the regular login.")
+          setIsSubmitting(false)
+          return
+        }
 
-      // Convert mentor to user format for login
-      const mentorAsUser = {
-        id: mentor.id,
-        name: mentor.name,
-        email: mentor.email,
-        role: mentor.role,
-        experience: mentor.experience.toString(), // Convert number to string
-        createdAt: mentor.createdAt
+        // Get the latest mentor data from database
+        const mentorData = db.getUserById(result.user.id) as MentorApplication
+        if (!mentorData) {
+          setError("Mentor account not found. Please contact support.")
+          setIsSubmitting(false)
+          return
+        }
+
+        login(mentorData)
+        
+        // Redirect based on mentor status
+        if (mentorData.status === "active") {
+          router.push("/mentor/dashboard")
+        } else if (mentorData.status === "pending") {
+          router.push("/mentor/application-submitted")
+        } else {
+          setError("Your mentor application was not approved. Please contact support.")
+        }
+      } else {
+        setError(result.error || "Login failed")
       }
-      
-      // Login the mentor
-      login(mentorAsUser)
-      router.push("/mentor/dashboard")
-    } catch (err) {
-      setError("Login failed. Please try again.")
+    } catch (error) {
+      setError("An unexpected error occurred. Please try again.")
     } finally {
-      setIsLoading(false)
+      setIsSubmitting(false)
     }
   }
 
@@ -78,15 +86,15 @@ export default function MentorLoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                   required
                 />
               </div>
@@ -97,12 +105,12 @@ export default function MentorLoginPage() {
                   id="password"
                   type="password"
                   placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  value={formData.password}
+                  onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
                   required
                 />
                 <p className="text-xs text-muted-foreground">
-                  Demo password: mentor123
+                  Use the password you created when applying as a mentor
                 </p>
               </div>
 
@@ -113,9 +121,8 @@ export default function MentorLoginPage() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                <LogIn className="h-4 w-4 mr-2" />
-                {isLoading ? "Signing in..." : "Sign In"}
+              <Button type="submit" className="w-full" disabled={isSubmitting}>
+                {isSubmitting ? "Signing in..." : "Sign In"}
               </Button>
             </form>
 

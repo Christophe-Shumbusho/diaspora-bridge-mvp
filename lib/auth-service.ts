@@ -235,23 +235,7 @@ export class AuthService {
   // Admin functions
   static async approveMentor(mentorId: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const mentor = db.getUserById(mentorId)
-      if (!mentor || mentor.role !== "mentor") {
-        return { success: false, error: "Mentor not found" }
-      }
-
-      const updatedMentor = db.updateUser(mentorId, { status: "active" })
-      if (!updatedMentor) {
-        return { success: false, error: "Failed to approve mentor" }
-      }
-
-      // Send approval email
-      await sendEmail(
-        mentor.email,
-        "Congratulations! Your Mentor Application has been Approved 🎉",
-        `Hi ${mentor.name},\n\nGreat news! Your application to become a mentor on Diaspora Bridge has been approved.\n\nYou can now log in to your mentor dashboard and start connecting with mentees who are looking for guidance in your field.\n\nThank you for joining our mission to empower the next generation of Rwandan professionals.\n\nBest regards,\nThe Diaspora Bridge Team`
-      )
-
+      db.approveMentor(mentorId)
       return { success: true }
     } catch (error) {
       return { success: false, error: "Failed to approve mentor" }
@@ -260,6 +244,7 @@ export class AuthService {
 
   static async rejectMentor(mentorId: string, reason?: string): Promise<{ success: boolean; error?: string }> {
     try {
+      db.rejectMentor(mentorId)
       const mentor = db.getUserById(mentorId)
       if (!mentor || mentor.role !== "mentor") {
         return { success: false, error: "Mentor not found" }

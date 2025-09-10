@@ -71,13 +71,23 @@ export function getConversationsForCurrentUser(): Conversation[] {
   const user = AuthService.getCurrentUser()
   if (!user) return []
 
-  const conversations = getAllConversations()
+  // Use database conversations instead of separate repo
+  const { db } = require('./database')
+  const conversations = db.getConversationsForUser(user.id)
   
-  if (user.role === "mentor") {
-    return conversations.filter(c => c.mentorId === user.id)
-  } else if (user.role === "mentee") {
-    return conversations.filter(c => c.menteeId === user.id)
-  }
-  
-  return []
+  return conversations.map((conv: any) => ({
+    id: conv.id,
+    mentorId: conv.mentorId,
+    mentorName: db.getUserById(conv.mentorId)?.name || "Unknown Mentor",
+    menteeId: conv.menteeId,
+    menteeName: db.getUserById(conv.menteeId)?.name || "Unknown Mentee",
+    status: conv.status,
+    createdAt: conv.createdAt,
+    lastMessageAt: conv.lastMessageAt,
+    lastMessage: conv.messages.length > 0 ? {
+      content: conv.messages[conv.messages.length - 1].content,
+      timestamp: conv.messages[conv.messages.length - 1].timestamp,
+      senderName: db.getUserById(conv.messages[conv.messages.length - 1].senderId)?.name || "Unknown"
+    } : undefined
+  }))
 }

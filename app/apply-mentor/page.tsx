@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { addApplication, type MentorApplication } from "@/lib/applications-repo"
+import { db, type MentorApplication } from "@/lib/database"
 
 const CAREER_FIELDS = [
   "Technology & Software",
@@ -42,17 +42,27 @@ export default function ApplyMentorPage() {
       id: `app-${Date.now()}`,
       name: form.name,
       email: form.email,
+      password: "temp123", // Temporary password, will be set during approval
+      role: "mentor" as const,
+      status: "pending" as const,
+      createdAt: new Date(),
+      updatedAt: new Date(),
       title: form.title,
       company: form.company,
       field: form.field,
       location: form.location,
-      experience: parseInt(form.experience || "0"),
+      yearsOfExperience: parseInt(form.experience || "0"),
       bio: form.bio,
       expertise: form.expertise.split(",").map(s => s.trim()).filter(Boolean),
-      createdAt: new Date(),
-      status: "pending",
+      availability: "available" as const,
+      imageUrl: "",
+      conversationStarters: [],
+      linkedinUrl: "",
+      websiteUrl: "",
+      whyMentor: "",
+      achievements: []
     }
-    addApplication(app)
+    db.createUser(app)
     setSubmitted(true)
   }
 

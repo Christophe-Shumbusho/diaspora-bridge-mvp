@@ -1,19 +1,25 @@
- import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { use } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, MapPin, Briefcase, MessageCircle, Star } from "lucide-react"
 import Link from "next/link"
-import { SAMPLE_MENTORS } from "@/lib/mentors"
+import { SAMPLE_MENTORS, getApprovedMentors } from "@/lib/mentors"
 import { notFound } from "next/navigation"
 
 interface MentorProfilePageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
 export default function MentorProfilePage({ params }: MentorProfilePageProps) {
-  const mentor = SAMPLE_MENTORS.find((m) => m.id === params.id)
+  const { id } = use(params)
+  
+  // First check approved mentors, then fall back to sample mentors for demo
+  const approvedMentors = getApprovedMentors()
+  const mentor = approvedMentors.find((m) => m.id === id) || 
+                 SAMPLE_MENTORS.find((m) => m.id === id)
 
   if (!mentor) {
     notFound()
@@ -76,9 +82,9 @@ export default function MentorProfilePage({ params }: MentorProfilePageProps) {
                   asChild={mentor.availability === "available"}
                 >
                   {mentor.availability === "available" ? (
-                    <Link href={`/chat/start/${mentor.id}`}>
+                    <Link href={`/request-mentorship/${mentor.id}`}>
                       <MessageCircle className="h-4 w-4 mr-2" />
-                      Start Conversation
+                      Request Mentorship
                     </Link>
                   ) : (
                     <>Currently Unavailable</>

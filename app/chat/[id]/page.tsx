@@ -46,17 +46,21 @@ export default function ConversationPage({ params }: ConversationPageProps) {
     setConversation(conv)
     setMessages(conv.messages)
     setIsLoading(false)
+  }, [resolvedParams.id, user, router])
 
-    // Set up polling for new messages (simulating real-time)
+  // Separate effect for message polling to avoid infinite loops
+  useEffect(() => {
+    if (!conversation) return
+
     const interval = setInterval(() => {
       const updatedConv = db.getConversation(resolvedParams.id)
-      if (updatedConv && updatedConv.messages.length !== messages.length) {
+      if (updatedConv) {
         setMessages(updatedConv.messages)
       }
-    }, 1000) // Check for new messages every second
+    }, 2000) // Check for new messages every 2 seconds
 
     return () => clearInterval(interval)
-  }, [resolvedParams.id, user, router, messages.length])
+  }, [conversation, resolvedParams.id])
 
   const handleSendMessage = () => {
     if (!newMessage.trim() || !conversation || !user) return

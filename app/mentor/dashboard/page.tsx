@@ -31,7 +31,9 @@ export default function MentorDashboardPage() {
       return
     }
 
-    if ((user as MentorApplication).status !== "active") {
+    // Check if mentor is approved (active status)
+    const mentorData = db.getUserById(user.id) as MentorApplication
+    if (!mentorData || mentorData.status !== "active") {
       router.push("/mentor/application-submitted")
       return
     }

@@ -30,8 +30,8 @@ export default function HomePage() {
               size="lg"
               className="text-lg px-10 py-4 shadow-glow hover:shadow-lg transition-all duration-300"
             >
-              <Link href="/signup">
-                Find Mentorship
+              <Link href="/mentors">
+                Browse Mentors
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
@@ -41,7 +41,7 @@ export default function HomePage() {
               className="text-lg px-10 py-4 border-2 hover:bg-muted/50 bg-transparent"
               asChild
             >
-              <Link href="/mentors">Browse Mentors</Link>
+              <Link href="/apply-mentor">Apply to be a Mentor</Link>
             </Button>
           </div>
           <div className="flex flex-wrap justify-center gap-8 mt-16 text-sm text-muted-foreground">
